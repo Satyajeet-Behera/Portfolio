@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 const PORT = 3009;
-const URL = `http://localhost:${PORT}`;
+const URL = `http://127.0.0.1:${PORT}`;
 
 async function waitForServer(url, timeoutMs = 20000) {
   const start = Date.now();
@@ -28,7 +28,7 @@ async function waitForServer(url, timeoutMs = 20000) {
 
 async function run() {
   console.log(`Starting Next.js production server on port ${PORT}...`);
-  const server = spawn('npx', ['next', 'start', '-p', String(PORT)], {
+  const server = spawn('npx', ['next', 'start', '-p', String(PORT), '-H', '127.0.0.1'], {
     shell: true,
     stdio: 'inherit',
   });

@@ -28,7 +28,7 @@ export const HeroPortrait: React.FC<HeroPortraitProps> = ({
             height={768}
             priority={priority}
             fetchPriority="high"
-            quality={90}
+            quality={85}
             sizes="(max-width: 640px) 94vw, (max-width: 1024px) 48vw, 540px"
             className={styles.image}
           />

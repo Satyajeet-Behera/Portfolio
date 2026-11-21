@@ -1,0 +1,235 @@
+'use client';
+
+import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { starkConfig } from './stark-config';
+import { loadImage, getOptimizedDpr } from '@/lib/binary-renderer/rendering-utils';
+import { sampleImageToGrid, SampledGrid } from '@/lib/binary-renderer/image-sampler';
+import { drawBinaryTransformation } from '@/lib/binary-renderer/binary-particles';
+
+interface BinaryMaskRendererProps {
+  scrollProgress?: number; // 0.0 to 1.0
+  className?: string;
+  onLoaded?: () => void;
+}
+
+export const BinaryMaskRenderer: React.FC<BinaryMaskRendererProps> = ({
+  scrollProgress = 0,
+  className,
+  onLoaded,
+}) => {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  // Asset refs
+  const topImgRef = useRef<HTMLImageElement | null>(null);
+  const bottomImgRef = useRef<HTMLImageElement | null>(null);
+  const sampledGridRef = useRef<SampledGrid | null>(null);
+
+  // Interaction State
+  const [isReady, setIsReady] = useState(false);
+  const pointerPos = useRef({ x: -9999, y: -9999 });
+  const targetPointerPos = useRef({ x: -9999, y: -9999 });
+  const isPointerActive = useRef(false);
+  const activeIntensity = useRef(0); // Smooth interpolation for cursor entrance/exit
+  const animationFrameId = useRef<number | null>(null);
+  const startTime = useRef(Date.now());
+
+  // 1. Preload and Sample Images when section approaches viewport
+  useEffect(() => {
+    let isMounted = true;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const startLoadingAssets = () => {
+      Promise.all([
+        loadImage(starkConfig.images.tonyStark.src).catch(() =>
+          loadImage(starkConfig.images.tonyStark.fallback)
+        ),
+        loadImage(starkConfig.images.satyajeet.src).catch(() =>
+          loadImage(starkConfig.images.satyajeet.fallback)
+        ),
+      ])
+        .then(([topImg, bottomImg]) => {
+          if (!isMounted) return;
+          topImgRef.current = topImg;
+          bottomImgRef.current = bottomImg;
+
+          // Precompute grid sampling once at target resolution
+          const width = starkConfig.engine.defaultWidth;
+          const height = starkConfig.engine.defaultHeight;
+          sampledGridRef.current = sampleImageToGrid(
+            topImg,
+            width,
+            height,
+            starkConfig.engine.particleStepSize
+          );
+
+          setIsReady(true);
+          if (onLoaded) onLoaded();
+        })
+        .catch((err) => {
+          console.error('Failed to load transformation assets:', err);
+        });
+    };
+
+    if (typeof IntersectionObserver !== 'undefined') {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (entries[0]?.isIntersecting) {
+            observer.disconnect();
+            startLoadingAssets();
+          }
+        },
+        { rootMargin: '350px' }
+      );
+      observer.observe(canvas);
+      return () => {
+        isMounted = false;
+        observer.disconnect();
+      };
+    } else {
+      startLoadingAssets();
+      return () => {
+        isMounted = false;
+      };
+    }
+  }, [onLoaded]);
+
+  // 2. High-Performance Render Loop
+  const renderFrame = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas || !topImgRef.current || !bottomImgRef.current || !sampledGridRef.current) {
+      return;
+    }
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Smoothly interpolate pointer position (ease factor)
+    pointerPos.current.x += (targetPointerPos.current.x - pointerPos.current.x) * 0.22;
+    pointerPos.current.y += (targetPointerPos.current.y - pointerPos.current.y) * 0.22;
+
+    // Smoothly interpolate active intensity for entry/exit
+    const targetIntensity = isPointerActive.current ? 1 : 0;
+    activeIntensity.current += (targetIntensity - activeIntensity.current) * 0.12;
+
+    const time = (Date.now() - startTime.current) * 0.001;
+    const currentRadius = starkConfig.engine.maskRadius * activeIntensity.current;
+
+    drawBinaryTransformation(
+      ctx,
+      topImgRef.current,
+      bottomImgRef.current,
+      sampledGridRef.current,
+      {
+        cursorX: pointerPos.current.x,
+        cursorY: pointerPos.current.y,
+        cursorActive: activeIntensity.current > 0.01,
+        maskRadius: currentRadius,
+        maskFeather: starkConfig.engine.maskFeather,
+        scrollProgress,
+        time,
+        particleSize: starkConfig.engine.particleFontSize,
+        accentGold: starkConfig.engine.accentGold,
+      },
+      starkConfig.engine.defaultWidth,
+      starkConfig.engine.defaultHeight
+    );
+
+    // Continue loop if active, transforming via scroll, or fading out
+    const needsContinuousLoop =
+      isPointerActive.current ||
+      activeIntensity.current > 0.01 ||
+      (scrollProgress > 0.01 && scrollProgress < 0.99);
+
+    if (needsContinuousLoop) {
+      animationFrameId.current = requestAnimationFrame(renderFrame);
+    } else {
+      animationFrameId.current = null;
+    }
+  }, [scrollProgress]);
+
+  // Trigger render on scroll update
+  useEffect(() => {
+    if (!isReady) return;
+    if (!animationFrameId.current) {
+      animationFrameId.current = requestAnimationFrame(renderFrame);
+    }
+  }, [scrollProgress, isReady, renderFrame]);
+
+  // Setup Canvas Dimensions with HiDPI support
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const dpr = getOptimizedDpr();
+    const width = starkConfig.engine.defaultWidth;
+    const height = starkConfig.engine.defaultHeight;
+
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+
+    const ctx = canvas.getContext('2d');
+    if (ctx && dpr !== 1) {
+      ctx.scale(dpr, dpr);
+    }
+
+    if (isReady && !animationFrameId.current) {
+      animationFrameId.current = requestAnimationFrame(renderFrame);
+    }
+
+    return () => {
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current);
+      }
+    };
+  }, [isReady, renderFrame]);
+
+  // Pointer & Touch Handlers
+  const handlePointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = starkConfig.engine.defaultWidth / rect.width;
+    const scaleY = starkConfig.engine.defaultHeight / rect.height;
+
+    targetPointerPos.current.x = (e.clientX - rect.left) * scaleX;
+    targetPointerPos.current.y = (e.clientY - rect.top) * scaleY;
+    isPointerActive.current = true;
+
+    if (!animationFrameId.current) {
+      animationFrameId.current = requestAnimationFrame(renderFrame);
+    }
+  };
+
+  const handlePointerEnter = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    handlePointerMove(e);
+  };
+
+  const handlePointerLeave = () => {
+    isPointerActive.current = false;
+    if (!animationFrameId.current) {
+      animationFrameId.current = requestAnimationFrame(renderFrame);
+    }
+  };
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className={className}
+      onPointerMove={handlePointerMove}
+      onPointerEnter={handlePointerEnter}
+      onPointerLeave={handlePointerLeave}
+      style={{
+        display: 'block',
+        width: '100%',
+        height: 'auto',
+        aspectRatio: `${starkConfig.engine.defaultWidth} / ${starkConfig.engine.defaultHeight}`,
+        touchAction: 'none',
+        cursor: 'crosshair',
+      }}
+      aria-label="Interactive Binary Transformation Canvas: Move cursor or scroll to reveal Satyajeet Behera from Tony Stark"
+      role="img"
+    />
+  );
+};

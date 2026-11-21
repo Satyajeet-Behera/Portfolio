@@ -1,0 +1,211 @@
+@use '@/styles/variables' as *;
+@use '@/styles/breakpoints' as *;
+@use '@/styles/mixins' as *;
+@use '@/styles/typography' as *;
+
+.section {
+  position: relative;
+  background-color: #060608;
+  border-top: 1px solid $color-border-subtle;
+  padding: 6rem 0;
+  overflow: hidden;
+
+  @include screen-below($bp-tablet) {
+    padding: 4rem 0;
+  }
+}
+
+.container {
+  width: 100%;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  align-items: center;
+  gap: 4.5rem;
+
+  @include screen-below($bp-laptop) {
+    grid-template-columns: 1fr;
+    gap: 3.5rem;
+  }
+
+  @include screen-below($bp-tablet) {
+    gap: 2.5rem;
+  }
+}
+
+// Left Column
+.contentCol {
+  display: flex;
+  flex-direction: column;
+}
+
+.eyebrowWrapper {
+  margin-bottom: 1.5rem;
+
+  @include screen-below($bp-tablet) {
+    margin-bottom: 1.125rem;
+  }
+}
+
+.heading {
+  @include font-display;
+  font-weight: 700;
+  line-height: 1.15;
+  color: $color-text-primary;
+  margin-bottom: 1.5rem;
+
+  @include fluid-type(2rem, 3.75rem, $bp-mobile-sm, $bp-desktop-lg);
+
+  @include screen-below($bp-tablet) {
+    line-height: 1.2;
+    margin-bottom: 1.25rem;
+  }
+}
+
+.magixHighlight {
+  font-weight: 800;
+  background: linear-gradient(135deg, #ffffff 0%, #ececed 40%, $color-accent-gold-light 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+  letter-spacing: -0.02em;
+  text-shadow: 0 0 28px rgba(197, 160, 89, 0.2);
+}
+
+.period {
+  color: $color-accent-gold;
+  -webkit-text-fill-color: $color-accent-gold;
+}
+
+.description {
+  @include font-sans;
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: $color-text-secondary;
+  max-width: 36rem;
+  margin-bottom: 2.5rem;
+
+  @include screen-below($bp-tablet) {
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    margin-bottom: 2rem;
+  }
+}
+
+// Features List
+.featuresList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.featureCard {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  transition: all $transition-medium;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(197, 160, 89, 0.3);
+    transform: translateX(4px);
+  }
+}
+
+.featureHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin-bottom: 0.35rem;
+}
+
+.featureDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: $color-accent-gold;
+  box-shadow: 0 0 6px rgba(197, 160, 89, 0.7);
+}
+
+.featureTitle {
+  font-family: $font-sans;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: $color-text-primary;
+}
+
+.featureDetail {
+  font-family: $font-sans;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: $color-text-secondary;
+  margin-left: 1rem;
+}
+
+// Action Row
+.actionRow {
+  display: flex;
+  align-items: center;
+}
+
+.githubButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1.625rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  font-family: $font-sans;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: $color-text-primary;
+  text-decoration: none;
+  transition: all $transition-medium;
+
+  @include focus-visible-ring;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.09);
+    border-color: $color-accent-gold;
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(197, 160, 89, 0.16);
+
+    .githubIcon {
+      color: $color-accent-gold-light;
+      transform: scale(1.08);
+    }
+
+    .externalArrow {
+      transform: translate(2px, -2px);
+    }
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.githubIcon {
+  color: $color-text-secondary;
+  transition: all $transition-fast;
+}
+
+.externalArrow {
+  font-family: $font-mono;
+  font-size: 0.875rem;
+  color: $color-accent-gold-light;
+  transition: transform $transition-fast;
+}
+
+// Right Column: Stage
+.stageCol {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

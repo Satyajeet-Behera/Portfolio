@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 const PORT = 3010;
-const URL = `http://localhost:${PORT}`;
+const URL = `http://127.0.0.1:${PORT}`;
 const CHROME = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 
 const viewports = [
@@ -39,7 +39,7 @@ async function waitForServer(url, timeoutMs = 20000) {
 
 async function run() {
   console.log(`Starting Next.js production server on port ${PORT}...`);
-  const server = spawn('npx', ['next', 'start', '-p', String(PORT)], {
+  const server = spawn('npx', ['next', 'start', '-p', String(PORT), '-H', '127.0.0.1'], {
     shell: true,
     stdio: 'ignore',
   });
@@ -58,7 +58,34 @@ async function run() {
       const stats = fs.statSync(outPath);
       console.log(`Captured ${vp.name} (${vp.width}x${vp.height}): ${stats.size} bytes`);
     }
-    console.log('All viewports successfully verified and captured.');
+
+    // Capture Phase 2 Sections
+    const sectionTargets = [
+      { name: 'stark-desktop-1440', url: `${URL}/#intelligence`, width: 1440, height: 900 },
+      { name: 'stark-mobile-390', url: `${URL}/#intelligence`, width: 390, height: 844 },
+      { name: 'magix-desktop-1440', url: `${URL}/#magix`, width: 1440, height: 900 },
+      { name: 'magix-mobile-390', url: `${URL}/#magix`, width: 390, height: 844 },
+    ];
+
+    for (const st of sectionTargets) {
+      const outPath = path.join(shotsDir, `${st.name}.png`);
+      const cmd = `"${CHROME}" --headless=new --disable-gpu --no-sandbox --window-size=${st.width},${st.height} --screenshot="${outPath}" "${st.url}"`;
+      execSync(cmd, { stdio: 'ignore' });
+      const stats = fs.statSync(outPath);
+      console.log(`Captured ${st.name} (${st.width}x${st.height}): ${stats.size} bytes`);
+    }
+
+    // Copy to artifact directory
+    const artifactDir = 'C:\\Users\\r6768\\.gemini\\antigravity\\brain\\b9e0c139-b10e-45c8-9714-608765325ab8\\screenshots';
+    if (!fs.existsSync(artifactDir)) fs.mkdirSync(artifactDir, { recursive: true });
+
+    for (const file of fs.readdirSync(shotsDir)) {
+      if (file.endsWith('.png')) {
+        fs.copyFileSync(path.join(shotsDir, file), path.join(artifactDir, file));
+      }
+    }
+    console.log(`Copied screenshots to artifact directory: ${artifactDir}`);
+    console.log('All viewports and sections successfully verified and captured.');
   } finally {
     try {
       execSync(`taskkill /F /T /PID ${server.pid}`);

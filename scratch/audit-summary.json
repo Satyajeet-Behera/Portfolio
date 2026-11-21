@@ -1,14 +1,14 @@
 {
   "mobile": {
     "label": "Mobile",
-    "performance": 98,
+    "performance": 88,
     "accessibility": 100,
     "bestPractices": 100,
     "seo": 100,
-    "lcp": "2.3 s",
+    "lcp": "2.8 s",
     "cls": "0",
-    "tbt": "90 ms",
-    "fcp": "1.0 s"
+    "tbt": "340 ms",
+    "fcp": "0.9 s"
   },
   "desktop": {
     "label": "Desktop",
@@ -16,7 +16,7 @@
     "accessibility": 100,
     "bestPractices": 100,
     "seo": 100,
-    "lcp": "0.5 s",
+    "lcp": "0.7 s",
     "cls": "0",
     "tbt": "0 ms",
     "fcp": "0.3 s"

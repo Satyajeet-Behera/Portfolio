@@ -1,0 +1,157 @@
+@use '@/styles/variables' as *;
+@use '@/styles/breakpoints' as *;
+@use '@/styles/mixins' as *;
+@use '@/styles/typography' as *;
+
+.section {
+  position: relative;
+  background-color: $color-bg-base;
+  border-top: 1px solid $color-border-subtle;
+  overflow: visible;
+}
+
+.pinWrapper {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 0;
+
+  @include screen-below($bp-tablet) {
+    min-height: auto;
+    padding: 3rem 0;
+  }
+}
+
+.container {
+  width: 100%;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  align-items: center;
+  gap: 4rem;
+
+  @include screen-below($bp-laptop) {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  @include screen-below($bp-tablet) {
+    gap: 2.25rem;
+  }
+}
+
+// Left Column: Typography
+.contentCol {
+  display: flex;
+  flex-direction: column;
+}
+
+.eyebrowWrapper {
+  margin-bottom: 1.5rem;
+
+  @include screen-below($bp-tablet) {
+    margin-bottom: 1.125rem;
+  }
+}
+
+.heading {
+  @include font-display;
+  font-weight: 700;
+  line-height: 1.15;
+  color: $color-text-primary;
+  margin-bottom: 1.5rem;
+
+  @include fluid-type(2rem, 3.75rem, $bp-mobile-sm, $bp-desktop-lg);
+
+  @include screen-below($bp-tablet) {
+    line-height: 1.2;
+    margin-bottom: 1.25rem;
+  }
+}
+
+.starkHighlight {
+  font-weight: 800;
+  background: linear-gradient(135deg, #ffffff 0%, #edecee 40%, $color-accent-gold-light 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+  letter-spacing: -0.02em;
+  text-shadow: 0 0 28px rgba(197, 160, 89, 0.15);
+}
+
+.period {
+  color: $color-accent-gold;
+  -webkit-text-fill-color: $color-accent-gold;
+}
+
+.description {
+  @include font-sans;
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: $color-text-secondary;
+  max-width: 36rem;
+  margin-bottom: 2.5rem;
+
+  @include screen-below($bp-tablet) {
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    margin-bottom: 2rem;
+  }
+}
+
+// Transformation Milestone Tracker
+.progressTracker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  padding-left: 0.5rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+
+  @include screen-below($bp-tablet) {
+    display: none;
+  }
+}
+
+.trackerStep {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.stepIndicator {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.2);
+  transition: all $transition-medium;
+
+  &.stepActive {
+    background-color: $color-accent-gold;
+    box-shadow: 0 0 10px rgba(197, 160, 89, 0.8);
+    transform: scale(1.3);
+  }
+}
+
+.stepLabel {
+  @include font-mono;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: $color-text-secondary;
+  transition: color $transition-fast;
+
+  .stepActive + & {
+    color: $color-text-primary;
+    font-weight: 600;
+  }
+}
+
+// Right Column: Stage
+.stageCol {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
