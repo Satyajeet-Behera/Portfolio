@@ -19,11 +19,10 @@ export const siteConfig = {
     { label: 'Home', href: '/', active: true, enabled: true },
     { label: 'Intelligence', href: '#intelligence', active: false, enabled: true },
     { label: 'Magix', href: '#magix', active: false, enabled: true },
-    // Future destinations for Phase 3-4:
-    // { label: 'About', href: '#about', active: false, enabled: false },
-    // { label: 'Projects', href: '#projects', active: false, enabled: false },
-    // { label: 'Blog', href: '/blog', active: false, enabled: false },
-    // { label: 'Contact', href: '#contact', active: false, enabled: false },
+    { label: 'Cuber', href: '#cuber', active: false, enabled: true },
+    { label: 'Story', href: '#story', active: false, enabled: true },
+    { label: 'Interests', href: '#interests', active: false, enabled: true },
+    { label: 'Goals', href: '#goals', active: false, enabled: true },
   ],
 
   author: {
@@ -38,7 +37,10 @@ export const siteConfig = {
       'TypeScript',
       'Creative Computing',
       'Interactive Web Experiences',
-      'Computer Vision & Matting',
+      'Speedcubing (3x3 Rubik\'s Cube)',
+      'Automotive Design & Dynamics',
+      'Horology & Mechanical Watchmaking',
+      'Value Investing & Capital Allocation',
     ],
   },
 } as const;

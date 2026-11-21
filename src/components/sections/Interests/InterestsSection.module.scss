@@ -1,0 +1,284 @@
+@use '@/styles/variables' as *;
+@use '@/styles/breakpoints' as *;
+@use '@/styles/mixins' as *;
+@use '@/styles/typography' as *;
+
+.section {
+  position: relative;
+  background-color: $color-bg-base;
+  border-top: 1px solid $color-border-subtle;
+  padding: 8rem 0;
+  overflow: hidden;
+
+  @include screen-below($bp-laptop) {
+    padding: 6rem 0;
+  }
+
+  @include screen-below($bp-tablet) {
+    padding: 4.5rem 0;
+  }
+}
+
+.container {
+  width: 100%;
+}
+
+// Section Header
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 4.5rem;
+
+  @include screen-below($bp-tablet) {
+    margin-bottom: 3rem;
+  }
+}
+
+.eyebrowWrapper {
+  margin-bottom: 1.25rem;
+}
+
+.heading {
+  @include font-display;
+  font-size: clamp(2.25rem, 4.5vw, 3.75rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.12;
+  color: $color-text-primary;
+}
+
+.questionMark {
+  color: $color-accent-gold;
+}
+
+// 3-Column Editorial Grid
+.editorialGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.25rem;
+  margin-bottom: 5.5rem;
+
+  @include screen-below($bp-laptop) {
+    gap: 1.75rem;
+  }
+
+  @include screen-below($bp-tablet) {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    margin-bottom: 4rem;
+  }
+}
+
+.interestCard {
+  display: flex;
+  flex-direction: column;
+  transition: transform $transition-medium;
+
+  &:hover {
+    transform: translateY(-6px);
+
+    .interestImage {
+      transform: scale(1.04);
+    }
+
+    .cardTitle {
+      color: $color-accent-gold-light;
+    }
+  }
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3.8;
+  border-radius: 16px;
+  overflow: hidden;
+  background-color: #0d0d12;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 1.5rem;
+  box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.6);
+}
+
+.interestImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transition: transform 600ms $ease-out-expo;
+}
+
+.cardMeta {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  right: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.cardNumber {
+  font-family: $font-mono;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: $color-accent-gold;
+  background: rgba(8, 8, 10, 0.75);
+  padding: 0.25rem 0.55rem;
+  border-radius: 4px;
+  border: 1px solid rgba(197, 160, 89, 0.25);
+  backdrop-filter: blur(8px);
+}
+
+.cardCategory {
+  font-family: $font-mono;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: $color-text-secondary;
+  background: rgba(8, 8, 10, 0.7);
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(8px);
+}
+
+.cardVignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(8, 8, 10, 0.3) 0%,
+    transparent 30%,
+    transparent 70%,
+    rgba(8, 8, 10, 0.6) 100%
+  );
+  z-index: 1;
+}
+
+// Minimal Card Content
+.cardContent {
+  display: flex;
+  flex-direction: column;
+}
+
+.cardTitle {
+  @include font-display;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  margin-bottom: 0.35rem;
+  transition: color $transition-fast;
+}
+
+.cardSubtitle {
+  @include font-sans;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: $color-accent-gold-light;
+  margin-bottom: 0.65rem;
+  letter-spacing: 0.01em;
+}
+
+.cardDescription {
+  @include font-sans;
+  font-size: 0.9375rem;
+  font-weight: 400;
+  line-height: 1.6;
+  color: $color-text-muted;
+}
+
+// Authentic Bottom Statement
+.statementWrapper {
+  position: relative;
+  width: 100%;
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.statementBacklight {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 140%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(197, 160, 89, 0.1) 0%,
+    transparent 70%
+  );
+  filter: blur(40px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.statementCard {
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(
+    135deg,
+    rgba(18, 18, 24, 0.75) 0%,
+    rgba(10, 10, 14, 0.85) 100%
+  );
+  border: 1px solid rgba(197, 160, 89, 0.22);
+  border-radius: 20px;
+  padding: 3rem 3.5rem;
+  text-align: center;
+  box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(12px);
+
+  @include screen-below($bp-tablet) {
+    padding: 2.25rem 1.75rem;
+  }
+}
+
+.quoteMark {
+  @include font-display;
+  font-size: 4rem;
+  line-height: 1;
+  color: $color-accent-gold;
+  opacity: 0.4;
+  margin-bottom: -1rem;
+  user-select: none;
+}
+
+.statementText {
+  @include font-display;
+  font-size: clamp(1.25rem, 2.5vw, 1.875rem);
+  font-weight: 600;
+  line-height: 1.45;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+  margin-bottom: 1.75rem;
+  font-style: italic;
+}
+
+.statementAuthor {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.authorDash {
+  width: 24px;
+  height: 1px;
+  background-color: $color-accent-gold;
+}
+
+.authorName {
+  font-family: $font-mono;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: $color-accent-gold-light;
+  text-transform: uppercase;
+}
