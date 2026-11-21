@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import { Header } from '@/components/layout/Header/Header';
+import { Footer } from '@/components/layout/Footer/Footer';
 import { constructMetadata } from '@/lib/metadata';
 import { generatePersonStructuredData } from '@/lib/structured-data';
 import './globals.scss';
@@ -43,6 +44,7 @@ export default function RootLayout({
         </a>
         <Header />
         {children}
+        <Footer />
       </body>
     </html>
   );

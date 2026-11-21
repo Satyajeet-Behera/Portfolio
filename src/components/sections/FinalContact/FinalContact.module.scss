@@ -1,0 +1,240 @@
+@use '../../../styles/variables' as *;
+
+.section {
+  position: relative;
+  background-color: var(--color-bg, #08080a);
+  color: var(--color-text-primary, #ffffff);
+  padding: 6rem 0 7rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+
+  @media (max-width: 768px) {
+    padding: 4.5rem 0 5rem;
+  }
+}
+
+.container {
+  position: relative;
+  z-index: 2;
+}
+
+.header {
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto 4rem;
+
+  @media (max-width: 768px) {
+    margin-bottom: 2.5rem;
+  }
+}
+
+.eyebrowWrapper {
+  display: inline-block;
+  margin-bottom: 1.25rem;
+}
+
+.heading {
+  font-size: clamp(2.25rem, 4vw, 3.25rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  margin-bottom: 1.25rem;
+}
+
+.period {
+  color: #3b82f6;
+}
+
+.description {
+  font-size: clamp(1rem, 1.2vw, 1.125rem);
+  line-height: 1.7;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: #0d0f14;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 2rem 1.5rem 1.75rem;
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    border-color: rgba(59, 130, 246, 0.4);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6), 0 0 20px rgba(59, 130, 246, 0.1);
+  }
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.iconCircle {
+  width: 46px;
+  height: 46px;
+  border-radius: 10px;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #60a5fa;
+  flex-shrink: 0;
+  transition: background 0.3s ease, transform 0.3s ease;
+
+  .card:hover & {
+    background: rgba(59, 130, 246, 0.2);
+    transform: scale(1.05);
+  }
+}
+
+.svgIcon {
+  width: 22px;
+  height: 22px;
+}
+
+.channelMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.protocolTag {
+  font-family: monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.channelName {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.channelDesc {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #94a3b8;
+  margin: 0 0 1.5rem;
+  flex-grow: 1;
+}
+
+.valueRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  padding: 0.6rem 0.85rem;
+  margin-bottom: 1.25rem;
+}
+
+.displayValue {
+  font-family: monospace;
+  font-size: 0.8rem;
+  color: #cbd5e1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.copyBtn {
+  background: transparent;
+  color: #60a5fa;
+  border: 1px solid rgba(96, 165, 250, 0.3);
+  border-radius: 4px;
+  padding: 0.25rem 0.55rem;
+  font-size: 0.725rem;
+  font-family: monospace;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+
+  &:hover {
+    background: rgba(96, 165, 250, 0.15);
+    border-color: #60a5fa;
+  }
+}
+
+.actionLink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.25s ease;
+
+  .card:hover & {
+    background: #3b82f6;
+    border-color: #3b82f6;
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+  }
+}
+
+.arrow {
+  font-size: 1rem;
+  transition: transform 0.2s ease;
+
+  .card:hover & {
+    transform: translate(2px, -2px);
+  }
+}
+
+// Precision Corner Accents
+.corner {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-color: rgba(59, 130, 246, 0.3);
+  pointer-events: none;
+}
+
+.cornerTL {
+  top: -1px;
+  left: -1px;
+  border-top: 2px solid;
+  border-left: 2px solid;
+}
+
+.cornerBR {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 2px solid;
+  border-right: 2px solid;
+}

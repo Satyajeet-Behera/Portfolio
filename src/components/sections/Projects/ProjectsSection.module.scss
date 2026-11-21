@@ -1,0 +1,367 @@
+@use '@/styles/variables' as *;
+@use '@/styles/breakpoints' as *;
+@use '@/styles/mixins' as *;
+@use '@/styles/typography' as *;
+
+.section {
+  position: relative;
+  background-color: $color-bg-base;
+  border-top: 1px solid $color-border-subtle;
+  overflow: hidden;
+}
+
+.pinWrapper {
+  width: 100%;
+  padding: 7rem 0 5rem 0;
+
+  @include screen-below($bp-laptop) {
+    padding: 5rem 0 4rem 0;
+  }
+
+  @include screen-below($bp-tablet) {
+    padding: 3.5rem 0 3rem 0;
+  }
+}
+
+.container {
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 3.5rem;
+  max-width: 720px;
+
+  @include screen-below($bp-tablet) {
+    margin-bottom: 2.25rem;
+  }
+}
+
+.eyebrowWrapper {
+  margin-bottom: 1.25rem;
+}
+
+.heading {
+  @include font-display;
+  font-size: clamp(2.25rem, 4.5vw, 3.75rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.12;
+  color: $color-text-primary;
+  margin-bottom: 1.25rem;
+}
+
+.period {
+  color: $color-accent-gold;
+}
+
+.description {
+  @include font-sans;
+  font-size: 1.125rem;
+  font-weight: 400;
+  line-height: 1.7;
+  color: $color-text-secondary;
+
+  @include screen-below($bp-tablet) {
+    font-size: 1rem;
+  }
+}
+
+// Track Container & Horizontal Row
+.trackContainer {
+  width: 100%;
+  overflow: visible;
+
+  @include screen-below($bp-laptop) {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    padding: 0 1.25rem 2rem 1.25rem;
+  }
+}
+
+.track {
+  display: flex;
+  align-items: stretch;
+  gap: 2.5rem;
+  padding-left: max(3rem, calc((100vw - 1320px) / 2 + 3rem));
+  padding-right: 5rem;
+  width: max-content;
+
+  @include screen-below($bp-laptop) {
+    padding: 0;
+    gap: 1.5rem;
+    width: max-content;
+  }
+}
+
+// Project Card
+.projectCard {
+  width: 580px;
+  flex-shrink: 0;
+  background: rgba(14, 14, 18, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.7);
+  transition: border-color $transition-fast, box-shadow $transition-fast;
+
+  &:hover {
+    border-color: rgba(197, 160, 89, 0.35);
+    box-shadow: 0 24px 60px -10px rgba(197, 160, 89, 0.12),
+                0 0 1px 1px rgba(197, 160, 89, 0.2);
+  }
+
+  @include screen-below($bp-tablet) {
+    width: calc(100vw - 2.5rem);
+    max-width: 420px;
+    scroll-snap-align: center;
+  }
+}
+
+.imageFrame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background-color: #000000;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.projectImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  transition: transform 600ms $ease-out-expo;
+
+  .projectCard:hover & {
+    transform: scale(1.03);
+  }
+}
+
+.cardHud {
+  position: absolute;
+  top: 1rem;
+  left: 1.25rem;
+  right: 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.hudNumber {
+  font-family: $font-mono;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: $color-accent-gold;
+  background: rgba(8, 8, 10, 0.75);
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  border: 1px solid rgba(197, 160, 89, 0.25);
+  backdrop-filter: blur(8px);
+}
+
+.hudCategory {
+  font-family: $font-mono;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: $color-text-secondary;
+  background: rgba(8, 8, 10, 0.75);
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+}
+
+.imageVignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(8, 8, 10, 0.35) 0%,
+    transparent 40%,
+    transparent 70%,
+    rgba(8, 8, 10, 0.6) 100%
+  );
+  z-index: 1;
+}
+
+// Card Body
+.cardBody {
+  padding: 1.75rem 2rem 2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+
+  @include screen-below($bp-tablet) {
+    padding: 1.35rem 1.5rem 1.5rem 1.5rem;
+  }
+}
+
+.projectTitle {
+  @include font-display;
+  font-size: 1.625rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  margin-bottom: 0.75rem;
+}
+
+.projectDescription {
+  @include font-sans;
+  font-size: 0.9375rem;
+  font-weight: 400;
+  line-height: 1.65;
+  color: $color-text-secondary;
+  margin-bottom: 1.5rem;
+  flex-grow: 1;
+}
+
+.techList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.75rem;
+}
+
+.techPill {
+  font-family: $font-mono;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: $color-accent-gold-light;
+  background: rgba(197, 160, 89, 0.08);
+  border: 1px solid rgba(197, 160, 89, 0.2);
+  border-radius: 6px;
+  padding: 0.25rem 0.6rem;
+}
+
+// Action Row
+.actionRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: auto;
+}
+
+.primaryLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, $color-accent-gold, $color-accent-gold-dark);
+  color: #08080a;
+  font-family: $font-sans;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.65rem 1.25rem;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: opacity $transition-fast, transform $transition-fast;
+
+  &:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+  }
+}
+
+.secondaryLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: $color-text-primary;
+  font-family: $font-sans;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.65rem 1.15rem;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background $transition-fast, border-color $transition-fast;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.25);
+  }
+}
+
+// Continuation Card ("And working on more projects.")
+.continuationCard {
+  position: relative;
+  width: 420px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @include screen-below($bp-tablet) {
+    width: calc(100vw - 3rem);
+    max-width: 380px;
+    scroll-snap-align: center;
+  }
+}
+
+.continuationGlow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(197, 160, 89, 0.14) 0%, transparent 70%);
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+.continuationInner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  background: rgba(14, 14, 18, 0.6);
+  border: 1px dashed rgba(197, 160, 89, 0.35);
+  border-radius: 20px;
+  padding: 3rem 2.25rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.continuationBadge {
+  font-family: $font-mono;
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: $color-accent-gold;
+  background: rgba(197, 160, 89, 0.1);
+  padding: 0.3rem 0.75rem;
+  border-radius: 20px;
+  border: 1px solid rgba(197, 160, 89, 0.25);
+}
+
+.continuationText {
+  @include font-display;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+}
+
+.continuationSub {
+  @include font-sans;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: $color-text-muted;
+  max-width: 320px;
+}

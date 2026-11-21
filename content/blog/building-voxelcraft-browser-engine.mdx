@@ -1,0 +1,113 @@
+---
+title: "Building Voxel Craft: Real-Time 3D Chunk Rendering and WebGL in the Browser"
+description: "How to build a high-performance browser-based 3D voxel sandbox inspired by Minecraft using WebGL, Three.js, chunk meshing, and procedural noise."
+date: "2026-11-15"
+category: "Web Graphics"
+tags: ["WebGL", "Three.js", "JavaScript", "Game Dev", "Performance Optimization"]
+image: "/images/projects/project-voxelcraft.webp"
+imageAlt: "Voxel Craft 3D sandbox engine showing procedural terrain, chunks, and inventory toolbar"
+featured: false
+---
+
+# Building Voxel Craft: Real-Time 3D Sandbox in the Browser
+
+When people think of 3D voxel games like Minecraft, they think of standalone desktop applications written in C++ or Java. Rendering thousands of dynamic blocks inside a standard web browser at a locked 60 frames per second presents unique performance hurdles.
+
+In building [Voxel Craft](https://satyajeet-voxelcraft.netlify.app), I wanted to push what is possible with native browser technologies: **WebGL**, **Three.js**, and efficient client-side procedural generation.
+
+Here is an engineering overview of the algorithms and data structures that power Voxel Craft.
+
+---
+
+## The Naive Mistake: 1 Block = 1 Mesh
+
+If you render a 16x16x16 chunk of voxel blocks by instantiating individual `THREE.BoxGeometry` meshes, you generate:
+
+```
+Blocks per chunk = 16 × 16 × 16 = 4,096 separate meshes
+```
+
+With an active draw distance of just 8 chunks in each direction, you would easily exceed 250,000 separate draw calls. The browser's JavaScript execution thread and GPU command queue would immediately grind to 2 frames per second.
+
+```
+Naive Pipeline (Unusable):
+[ 4,096 Box Geometries ] ──► [ 4,096 Draw Calls ] ──► GPU Bottleneck (2 FPS)
+```
+
+---
+
+## Solution 1: Chunk-Level Mesh Generation (Hidden Surface Removal)
+
+In a solid voxel terrain, the vast majority of block faces are completely invisible because they are touching adjacent solid blocks.
+
+In Voxel Craft, voxels are stored in flat, memory-efficient 1D typed arrays:
+
+```typescript
+// 16x16x256 voxel chunk data stored in Uint8Array
+const CHUNK_WIDTH = 16;
+const CHUNK_HEIGHT = 256;
+const voxelData = new Uint8Array(CHUNK_WIDTH * CHUNK_WIDTH * CHUNK_HEIGHT);
+
+function getVoxel(x: number, y: number, z: number): number {
+  if (x < 0 || x >= CHUNK_WIDTH || z < 0 || z >= CHUNK_WIDTH || y < 0 || y >= CHUNK_HEIGHT) {
+    return 0; // Air or neighbor chunk lookup
+  }
+  return voxelData[y * CHUNK_WIDTH * CHUNK_WIDTH + z * CHUNK_WIDTH + x];
+}
+```
+
+When building the geometry for a chunk:
+1. Iterate over every solid block.
+2. Check its 6 neighbors (North, South, East, West, Up, Down).
+3. **Only emit geometry vertices for faces that touch air or transparent blocks.**
+4. Merge all exposed faces into a single `THREE.BufferGeometry` with custom vertex attribute arrays (`position`, `normal`, `uv`).
+
+This single optimization eliminates over **85% of polygon vertices** and reduces thousands of draw calls down to **1 single draw call per chunk**.
+
+---
+
+## Solution 2: Procedural Simplex Noise Terrain
+
+To generate natural rolling hills, beaches, and mountain peaks, Voxel Craft utilizes layered octave Simplex Noise:
+
+```javascript
+function generateElevation(worldX, worldZ) {
+  let elevation = 0;
+  let frequency = 0.005;
+  let amplitude = 40;
+
+  // Layer 3 octaves of coherent noise
+  for (let octave = 0; octave < 3; octave++) {
+    elevation += simplex.noise2D(worldX * frequency, worldZ * frequency) * amplitude;
+    frequency *= 2.0;
+    amplitude *= 0.5;
+  }
+
+  // Offset with baseline sea level
+  return Math.floor(elevation + 32);
+}
+```
+
+By calculating terrain deterministically from world coordinates, chunks can be loaded and unloaded asynchronously as the player walks across the infinite world grid.
+
+---
+
+## Solution 3: Custom Texture Atlas & UV Coordinates
+
+Loading hundreds of separate texture files would cause texture thrashing on the GPU. Instead, all block textures (Grass Top, Dirt, Stone, Sand, Wood, Leaves) are packed into a single **512x512 Texture Atlas**.
+
+Each face simply indexes into predetermined UV bounds, maintaining razor-sharp pixelated retro aesthetics with `THREE.NearestFilter`:
+
+```javascript
+textureAtlas.magFilter = THREE.NearestFilter;
+textureAtlas.minFilter = THREE.NearestMipmapNearestFilter;
+```
+
+---
+
+## Play the Game Live
+
+You can experience Voxel Craft directly in any modern desktop or mobile browser with zero installation:
+
+- **Live URL**: [https://satyajeet-voxelcraft.netlify.app](https://satyajeet-voxelcraft.netlify.app)
+- **Features**: Real-time terrain destruction and placement, mission objectives, inventory toolbars, and responsive camera controls.

@@ -1,0 +1,65 @@
+@use '../../styles/variables' as *;
+
+.main {
+  min-height: 100vh;
+  background-color: var(--color-bg, #08080a);
+  color: var(--color-text-primary, #ffffff);
+  padding-top: 5rem; // Clearance for fixed header
+}
+
+.heroSection {
+  padding: 4.5rem 0 3.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
+    filter: blur(50px);
+    pointer-events: none;
+  }
+}
+
+.container {
+  position: relative;
+  z-index: 2;
+}
+
+.heroContent {
+  max-width: 760px;
+}
+
+.eyebrowWrapper {
+  margin-bottom: 1.25rem;
+}
+
+.title {
+  font-size: clamp(2.5rem, 5vw, 3.75rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  margin-bottom: 1.25rem;
+}
+
+.period {
+  color: #3b82f6;
+}
+
+.subtitle {
+  font-size: clamp(1.05rem, 1.4vw, 1.25rem);
+  line-height: 1.7;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.feedSection {
+  padding: 3.5rem 0 6rem;
+}

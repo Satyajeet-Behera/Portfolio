@@ -4,7 +4,7 @@ export const siteConfig = {
   name: 'Satyajeet Behera',
   title: 'Satyajeet Behera | AI Enthusiast & Developer',
   description:
-    'Explore the work and experiments of Satyajeet Behera, an AI enthusiast and developer building AI-powered tools, interactive games and digital experiences.',
+    'Explore the work, projects and experiments of Satyajeet Behera, an AI enthusiast and developer building AI-powered tools, autonomous agents and digital experiences.',
   eyebrow: 'AI ENTHUSIAST • DEVELOPER • BUILDER',
   mainHeading: "Hi, I'm Satyajeet Behera.",
   supportingDescription:
@@ -14,15 +14,17 @@ export const siteConfig = {
   // Safe environment-based URL handling
   url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
 
-  // Navigation configuration: only active/existing destinations are exposed
+  // Navigation configuration: exposed active destinations
   navItems: [
     { label: 'Home', href: '/', active: true, enabled: true },
-    { label: 'Intelligence', href: '#intelligence', active: false, enabled: true },
-    { label: 'Magix', href: '#magix', active: false, enabled: true },
-    { label: 'Cuber', href: '#cuber', active: false, enabled: true },
-    { label: 'Story', href: '#story', active: false, enabled: true },
-    { label: 'Interests', href: '#interests', active: false, enabled: true },
-    { label: 'Goals', href: '#goals', active: false, enabled: true },
+    { label: 'Intelligence', href: '/#stark', active: false, enabled: true },
+    { label: 'Magix', href: '/#magix', active: false, enabled: true },
+    { label: 'Cuber', href: '/#cuber', active: false, enabled: true },
+    { label: 'Story', href: '/#story', active: false, enabled: true },
+    { label: 'Interests', href: '/#interests', active: false, enabled: true },
+    { label: 'Projects', href: '/#projects', active: false, enabled: true },
+    { label: 'Contact', href: '/#contact', active: false, enabled: true },
+    { label: 'Blog', href: '/blog', active: false, enabled: true },
   ],
 
   author: {

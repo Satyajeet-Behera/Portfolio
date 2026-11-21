@@ -59,12 +59,20 @@ async function run() {
       console.log(`Captured ${vp.name} (${vp.width}x${vp.height}): ${stats.size} bytes`);
     }
 
-    // Capture Phase 2 Sections
+    // Capture Phase 2 & Phase 3 Sections
     const sectionTargets = [
       { name: 'stark-desktop-1440', url: `${URL}/#intelligence`, width: 1440, height: 900 },
       { name: 'stark-mobile-390', url: `${URL}/#intelligence`, width: 390, height: 844 },
       { name: 'magix-desktop-1440', url: `${URL}/#magix`, width: 1440, height: 900 },
       { name: 'magix-mobile-390', url: `${URL}/#magix`, width: 390, height: 844 },
+      { name: 'cuber-desktop-1440', url: `${URL}/#cuber`, width: 1440, height: 900 },
+      { name: 'cuber-mobile-390', url: `${URL}/#cuber`, width: 390, height: 844 },
+      { name: 'story-desktop-1440', url: `${URL}/#story`, width: 1440, height: 900 },
+      { name: 'story-mobile-390', url: `${URL}/#story`, width: 390, height: 844 },
+      { name: 'interests-desktop-1440', url: `${URL}/#interests`, width: 1440, height: 900 },
+      { name: 'interests-mobile-390', url: `${URL}/#interests`, width: 390, height: 844 },
+      { name: 'goals-desktop-1440', url: `${URL}/#goals`, width: 1440, height: 900 },
+      { name: 'goals-mobile-390', url: `${URL}/#goals`, width: 390, height: 844 },
     ];
 
     for (const st of sectionTargets) {
