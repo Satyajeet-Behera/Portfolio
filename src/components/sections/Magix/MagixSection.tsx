@@ -13,7 +13,7 @@ export const MagixSection: React.FC = () => {
           {/* Left Column: Narrative, Features & Description */}
           <div className={styles.contentCol}>
             <div className={styles.eyebrowWrapper}>
-              <SectionLabel text={magixConfig.eyebrow} />
+              <SectionLabel text={magixConfig.eyebrow} className={styles.magixSectionLabel} />
             </div>
 
             <h2 className={styles.heading}>

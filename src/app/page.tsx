@@ -1,19 +1,6 @@
-import dynamic from 'next/dynamic';
 import { Hero } from '@/components/sections/Hero/Hero';
-
-const TonyStarkSection = dynamic(
-  () =>
-    import('@/components/sections/TonyStark/TonyStarkSection').then(
-      (mod) => mod.TonyStarkSection
-    )
-);
-
-const MagixSection = dynamic(
-  () =>
-    import('@/components/sections/Magix/MagixSection').then(
-      (mod) => mod.MagixSection
-    )
-);
+import { TonyStarkSection } from '@/components/sections/TonyStark/TonyStarkSection';
+import { MagixSection } from '@/components/sections/Magix/MagixSection';
 
 export default function HomePage() {
   return (

@@ -18,8 +18,8 @@ export const magixConfig = {
     { label: "Ambient Awareness", detail: "Background task automation & contextual device synchronization" },
   ],
 
-  // Real or configurable placeholder GitHub repository link
-  githubUrl: "https://github.com/satyajeetbehera/magix",
+  // GitHub repository link
+  githubUrl: "https://github.com/Satyajeet-Behera/Magix",
 } as const;
 
 export type MagixConfig = typeof magixConfig;

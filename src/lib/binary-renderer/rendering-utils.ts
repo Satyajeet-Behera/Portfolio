@@ -19,7 +19,10 @@ export function lerp(start: number, end: number, t: number): number {
 export function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
-    img.crossOrigin = 'anonymous';
+    // Do not set crossOrigin for local same-origin assets to avoid false CORS blocks
+    if (src.startsWith('http://') || src.startsWith('https://')) {
+      img.crossOrigin = 'anonymous';
+    }
     img.onload = () => resolve(img);
     img.onerror = (err) => reject(err);
     img.src = src;

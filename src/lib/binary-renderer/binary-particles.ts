@@ -14,10 +14,11 @@ export interface BinaryRenderOptions {
   cursorActive: boolean;
   maskRadius: number;
   maskFeather: number;
-  scrollProgress: number; // 0.0 = Tony Stark, 0.5 = full binary, 1.0 = Satyajeet
+  scrollProgress: number; // 0.0 = Tony Stark, 0.5 = active deconstruction wave, 1.0 = Satyajeet Behera
   time: number;
   particleSize: number;
   accentGold: string;
+  tempCanvas?: HTMLCanvasElement;
 }
 
 export function drawBinaryTransformation(
@@ -38,38 +39,76 @@ export function drawBinaryTransformation(
     scrollProgress,
     time,
     particleSize,
+    tempCanvas: providedTempCanvas,
   } = options;
 
   ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
-  // 1. Draw base layer (Satyajeet Behera)
-  // Visible wherever mask or scroll progress reveals it
+  // 1. Draw base layer (Satyajeet Behera in suit)
+  // Revealed wherever the deconstruction wave or cursor mask removes Tony Stark
   ctx.save();
   ctx.drawImage(bottomImage, 0, 0, canvasWidth, canvasHeight);
   ctx.restore();
 
-  // 2. Determine top layer (Tony Stark) visibility
-  // If scrollProgress >= 0.95, Tony Stark is completely dissolved
-  if (scrollProgress < 0.98) {
+  // 2. Compute Wave Front Position across vertical axis
+  // Maps 0.0 -> 1.0 into an organic sweeping wave starting from top (-50px) to bottom (height + 60px)
+  const waveFront = scrollProgress * (canvasHeight + 140) - 70;
+
+  // 3. Render Top Layer (Tony Stark) with Dynamic Masking
+  if (scrollProgress < 0.99) {
     ctx.save();
 
-    // Use an offscreen composition or composite operation to punch the reveal hole
-    // We render Tony Stark onto an in-memory/isolated layer
-    const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = canvasWidth;
-    tempCanvas.height = canvasHeight;
+    // Use a persistent or dedicated offscreen canvas to avoid per-frame allocations
+    const tempCanvas = providedTempCanvas || document.createElement('canvas');
+    if (tempCanvas.width !== canvasWidth || tempCanvas.height !== canvasHeight) {
+      tempCanvas.width = canvasWidth;
+      tempCanvas.height = canvasHeight;
+    }
     const tempCtx = tempCanvas.getContext('2d');
 
     if (tempCtx) {
-      // Draw intact Tony Stark
+      tempCtx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+      // Draw intact Tony Stark cutout
       tempCtx.drawImage(topImage, 0, 0, canvasWidth, canvasHeight);
 
-      // Apply mask: punch out where cursor is or where scroll dissolves it
+      // Punch out dissolved areas using destination-out
       tempCtx.globalCompositeOperation = 'destination-out';
 
-      // Cursor localized mask hole
-      if (cursorActive && scrollProgress < 0.15) {
-        const gradient = tempCtx.createRadialGradient(
+      // (A) Scroll-driven sweeping wave dissolution
+      if (scrollProgress > 0.01) {
+        tempCtx.beginPath();
+        tempCtx.moveTo(0, 0);
+        tempCtx.lineTo(canvasWidth, 0);
+
+        // Sine-perturbed organic wave edge
+        const step = 15;
+        for (let x = canvasWidth; x >= 0; x -= step) {
+          const wavePerturb = Math.sin(x * 0.02 + time * 3.5) * 18 + Math.cos(x * 0.01 + time * 2) * 8;
+          const currentY = Math.min(canvasHeight + 20, waveFront + wavePerturb);
+          tempCtx.lineTo(x, currentY);
+        }
+
+        tempCtx.closePath();
+        tempCtx.fillStyle = 'rgba(0, 0, 0, 1)';
+        tempCtx.fill();
+
+        // Soft edge feathering along the wave front (30px gradient)
+        const featherHeight = 36;
+        const gradY1 = Math.max(0, waveFront - 10);
+        const gradY2 = Math.min(canvasHeight, waveFront + featherHeight);
+        if (gradY2 > gradY1) {
+          const waveGrad = tempCtx.createLinearGradient(0, gradY1, 0, gradY2);
+          waveGrad.addColorStop(0, 'rgba(0, 0, 0, 0.7)');
+          waveGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+          tempCtx.fillStyle = waveGrad;
+          tempCtx.fillRect(0, gradY1, canvasWidth, gradY2 - gradY1);
+        }
+      }
+
+      // (B) Localized cursor/touch circular mask hole
+      if (cursorActive && maskRadius > 1) {
+        const radGrad = tempCtx.createRadialGradient(
           cursorX,
           cursorY,
           Math.max(0, maskRadius - maskFeather),
@@ -77,104 +116,91 @@ export function drawBinaryTransformation(
           cursorY,
           maskRadius
         );
-        gradient.addColorStop(0, 'rgba(0, 0, 0, 1)');
-        gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        radGrad.addColorStop(0, 'rgba(0, 0, 0, 1)');
+        radGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
-        tempCtx.fillStyle = gradient;
+        tempCtx.fillStyle = radGrad;
         tempCtx.beginPath();
         tempCtx.arc(cursorX, cursorY, maskRadius, 0, Math.PI * 2);
         tempCtx.fill();
       }
 
-      // Scroll-based global dissolution
-      if (scrollProgress >= 0.15) {
-        // Map 0.15 -> 0.70 to global fade out of Tony Stark image
-        const globalDissolve = smoothstep(0.15, 0.7, scrollProgress);
-        tempCtx.fillStyle = `rgba(0, 0, 0, ${globalDissolve})`;
-        tempCtx.fillRect(0, 0, canvasWidth, canvasHeight);
-      }
-
-      // Composite the masked Tony Stark layer back onto the canvas
+      // Reset composite operation and paint masked Tony Stark onto main canvas
+      tempCtx.globalCompositeOperation = 'source-over';
       ctx.drawImage(tempCanvas, 0, 0);
     }
 
     ctx.restore();
   }
 
-  // 3. Render Binary Glyph Transition Layer
-  // Active in localized cursor zone or globally during scroll
-  const isScrollTransform = scrollProgress > 0.05 && scrollProgress < 0.95;
-  const isCursorActive = cursorActive && scrollProgress <= 0.15;
+  // 4. Render High-Tech Binary Glyph Transition Layer
+  // Renders dynamic, shimmering '0' and '1' particles actively at the wave front & cursor rim
+  ctx.save();
+  ctx.font = `600 ${particleSize}px ui-monospace, "SF Mono", monospace`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
 
-  if (isCursorActive || isScrollTransform) {
-    ctx.save();
-    ctx.font = `600 ${particleSize}px ui-monospace, "SF Mono", monospace`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
+  const samples = sampledGrid.samples;
+  const count = samples.length;
 
-    const samples = sampledGrid.samples;
-    const count = samples.length;
+  for (let i = 0; i < count; i++) {
+    const s = samples[i];
 
-    for (let i = 0; i < count; i++) {
-      const s = samples[i];
+    let intensity = 0;
 
-      let intensity = 0;
+    // Influence 1: Scroll Transformation Wave
+    if (scrollProgress > 0.005 && scrollProgress < 0.99) {
+      const wavePerturb = Math.sin(s.x * 0.02 + time * 3.5) * 18 + Math.cos(s.x * 0.01 + time * 2) * 8;
+      const targetWaveY = waveFront + wavePerturb;
+      const distToWave = s.y - targetWaveY;
 
-      // Case A: Localized cursor influence
-      if (isCursorActive) {
-        const dx = s.x - cursorX;
-        const dy = s.y - cursorY;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-
-        if (dist < maskRadius) {
-          // Peak intensity at boundary of mask where transformation is hottest
-          const edgeDist = Math.abs(dist - (maskRadius - maskFeather / 2));
-          const edgeIntensity = 1 - smoothstep(0, maskFeather, edgeDist);
-          const coreIntensity = (1 - smoothstep(0, maskRadius, dist)) * 0.45;
-          intensity = Math.max(edgeIntensity, coreIntensity);
-        }
-      }
-
-      // Case B: Scroll transformation influence
-      if (isScrollTransform) {
-        // Staged progression based on vertical position and noise offset
-        const normalizedY = s.y / canvasHeight;
-        const fadeThreshold = smoothstep(0.55, 0.9, scrollProgress);
-
-        // Individual particle activation with subtle offset
-        const particleTrigger = Math.sin(s.offset + time * 3) * 0.1 + normalizedY * 0.35 + 0.3;
-
-        if (scrollProgress >= 0.15 && scrollProgress < 0.55) {
-          intensity = smoothstep(0.15, 0.55, scrollProgress) * (1 - particleTrigger * 0.4);
-        } else if (scrollProgress >= 0.55) {
-          intensity = 1 - fadeThreshold;
-        }
-      }
-
-      if (intensity > 0.08) {
-        // High-tech character shuffle
-        if (Math.random() < 0.08) {
-          s.char = Math.random() > 0.5 ? '1' : '0';
-        }
-
-        // Slight digital jitter
-        const jitterX = Math.sin(time * 5 + s.offset) * (intensity * 3);
-        const jitterY = Math.cos(time * 5 + s.offset) * (intensity * 3);
-
-        // Color coding: Gold metallic highlights + high-contrast silver
-        const alpha = Math.min(1, intensity * (s.alpha * 1.2));
-        if (s.luminance > 0.6) {
-          ctx.fillStyle = `rgba(223, 186, 117, ${alpha})`; // Gold highlight
-        } else if (s.luminance > 0.3) {
-          ctx.fillStyle = `rgba(245, 245, 247, ${alpha * 0.9})`; // Crisp off-white
-        } else {
-          ctx.fillStyle = `rgba(157, 157, 166, ${alpha * 0.7})`; // Metallic silver
-        }
-
-        ctx.fillText(s.char, s.x + jitterX, s.y + jitterY);
+      // Active zone: from -65px (just passed, dissolving into embers) to +45px (approaching wave)
+      if (distToWave >= -65 && distToWave <= 45) {
+        const normDist = Math.abs(distToWave) / 55;
+        intensity = Math.max(intensity, (1 - normDist) * 1.35);
+      } else if (distToWave < -65 && distToWave > -130 && Math.random() < 0.25) {
+        // Floating trailing digital embers drifting upward
+        intensity = Math.max(intensity, 0.4 * (1 - (Math.abs(distToWave) - 65) / 65));
       }
     }
 
-    ctx.restore();
+    // Influence 2: Localized Cursor Mask Rim
+    if (cursorActive && maskRadius > 5) {
+      const dx = s.x - cursorX;
+      const dy = s.y - cursorY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist < maskRadius + 15) {
+        const edgeDist = Math.abs(dist - (maskRadius - maskFeather / 2));
+        const edgeIntensity = 1 - smoothstep(0, maskFeather, edgeDist);
+        const coreIntensity = (1 - smoothstep(0, maskRadius, dist)) * 0.35;
+        intensity = Math.max(intensity, Math.max(edgeIntensity, coreIntensity));
+      }
+    }
+
+    if (intensity > 0.08) {
+      // Periodic character shuffle
+      if (Math.random() < 0.09) {
+        s.char = Math.random() > 0.5 ? '1' : '0';
+      }
+
+      // Subtle dynamic particle scatter
+      const jitterX = Math.sin(time * 6 + s.offset) * (intensity * 2.8);
+      const jitterY = Math.cos(time * 6 + s.offset) * (intensity * 2.8) - (scrollProgress > 0.05 ? intensity * 3.5 : 0);
+
+      // Color coding: Golden highlights + pristine silver / white
+      const alpha = Math.min(1, intensity * (s.alpha * 1.35));
+      if (s.luminance > 0.55) {
+        ctx.fillStyle = `rgba(223, 186, 117, ${alpha})`; // Warm Arc Gold
+      } else if (s.luminance > 0.25) {
+        ctx.fillStyle = `rgba(245, 245, 247, ${alpha * 0.95})`; // Crisp Off-White
+      } else {
+        ctx.fillStyle = `rgba(165, 165, 175, ${alpha * 0.75})`; // Metallic Silver
+      }
+
+      ctx.fillText(s.char, s.x + jitterX, s.y + jitterY);
+    }
   }
+
+  ctx.restore();
 }

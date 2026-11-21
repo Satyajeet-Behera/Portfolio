@@ -34,7 +34,8 @@ export const TonyStarkSection: React.FC = () => {
         start: 'top top',
         end: starkConfig.scroll.pinDistance,
         pin: pinTargetRef.current,
-        scrub: 0.6,
+        pinSpacing: true,
+        scrub: 0.5,
         anticipatePin: 1,
         onUpdate: (self) => {
           setScrollProgress(self.progress);
@@ -42,7 +43,12 @@ export const TonyStarkSection: React.FC = () => {
       });
     }, sectionRef);
 
+    // Ensure ScrollTrigger accurately calculates start offset after DOM stabilizes
+    ScrollTrigger.refresh();
+    const timer = setTimeout(() => ScrollTrigger.refresh(), 300);
+
     return () => {
+      clearTimeout(timer);
       ctx.revert();
     };
   }, []);
@@ -104,7 +110,10 @@ export const TonyStarkSection: React.FC = () => {
 
             {/* Right Column: Coordinated Image Stage */}
             <div className={styles.stageCol}>
-              <StarkImageStage scrollProgress={scrollProgress} />
+              <StarkImageStage
+                scrollProgress={scrollProgress}
+                onLoaded={() => ScrollTrigger.refresh()}
+              />
             </div>
           </div>
         </Container>

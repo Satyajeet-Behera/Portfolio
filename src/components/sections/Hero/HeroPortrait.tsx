@@ -24,12 +24,12 @@ export const HeroPortrait: React.FC<HeroPortraitProps> = ({
           <Image
             src="/images/satyajeet-hero.webp"
             alt="Portrait of Satyajeet Behera"
-            width={1024}
-            height={768}
+            width={2048}
+            height={1536}
             priority={priority}
             fetchPriority="high"
-            quality={85}
-            sizes="(max-width: 640px) 94vw, (max-width: 1024px) 48vw, 540px"
+            quality={95}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 60vw, 800px"
             className={styles.image}
           />
           {/* Subtle vignette layer blending photograph's deep black background with site canvas */}

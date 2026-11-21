@@ -23,6 +23,7 @@ export const BinaryMaskRenderer: React.FC<BinaryMaskRendererProps> = ({
   const topImgRef = useRef<HTMLImageElement | null>(null);
   const bottomImgRef = useRef<HTMLImageElement | null>(null);
   const sampledGridRef = useRef<SampledGrid | null>(null);
+  const offscreenCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
   // Interaction State
   const [isReady, setIsReady] = useState(false);
@@ -32,8 +33,82 @@ export const BinaryMaskRenderer: React.FC<BinaryMaskRendererProps> = ({
   const activeIntensity = useRef(0); // Smooth interpolation for cursor entrance/exit
   const animationFrameId = useRef<number | null>(null);
   const startTime = useRef(Date.now());
+  const scrollProgressRef = useRef(scrollProgress);
 
-  // 1. Preload and Sample Images when section approaches viewport
+  // 1. High-Performance Render Loop
+  const renderFrame = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas || !topImgRef.current || !bottomImgRef.current || !sampledGridRef.current) {
+      animationFrameId.current = null;
+      return;
+    }
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      animationFrameId.current = null;
+      return;
+    }
+
+    // Smoothly interpolate pointer position (ease factor)
+    pointerPos.current.x += (targetPointerPos.current.x - pointerPos.current.x) * 0.22;
+    pointerPos.current.y += (targetPointerPos.current.y - pointerPos.current.y) * 0.22;
+
+    // Smoothly interpolate active intensity for entry/exit
+    const targetIntensity = isPointerActive.current ? 1 : 0;
+    activeIntensity.current += (targetIntensity - activeIntensity.current) * 0.12;
+
+    const time = (Date.now() - startTime.current) * 0.001;
+    const currentRadius = starkConfig.engine.maskRadius * activeIntensity.current;
+    const currentScroll = scrollProgressRef.current;
+
+    // Reusable offscreen canvas buffer
+    if (!offscreenCanvasRef.current) {
+      offscreenCanvasRef.current = document.createElement('canvas');
+    }
+
+    drawBinaryTransformation(
+      ctx,
+      topImgRef.current,
+      bottomImgRef.current,
+      sampledGridRef.current,
+      {
+        cursorX: pointerPos.current.x,
+        cursorY: pointerPos.current.y,
+        cursorActive: activeIntensity.current > 0.01,
+        maskRadius: currentRadius,
+        maskFeather: starkConfig.engine.maskFeather,
+        scrollProgress: currentScroll,
+        time,
+        particleSize: starkConfig.engine.particleFontSize,
+        accentGold: starkConfig.engine.accentGold,
+        tempCanvas: offscreenCanvasRef.current,
+      },
+      starkConfig.engine.defaultWidth,
+      starkConfig.engine.defaultHeight
+    );
+
+    // Continue loop if active, transforming via scroll, or fading out
+    const needsContinuousLoop =
+      isPointerActive.current ||
+      activeIntensity.current > 0.01 ||
+      (currentScroll > 0.005 && currentScroll < 0.995);
+
+    if (needsContinuousLoop) {
+      animationFrameId.current = requestAnimationFrame(renderFrame);
+    } else {
+      animationFrameId.current = null;
+    }
+  }, []);
+
+  // Keep scrollProgressRef in sync and request frame when progress changes
+  useEffect(() => {
+    scrollProgressRef.current = scrollProgress;
+    if (isReady && !animationFrameId.current) {
+      animationFrameId.current = requestAnimationFrame(renderFrame);
+    }
+  }, [scrollProgress, isReady, renderFrame]);
+
+  // 2. Preload and Sample Images immediately on mount
   useEffect(() => {
     let isMounted = true;
     const canvas = canvasRef.current;
@@ -65,96 +140,19 @@ export const BinaryMaskRenderer: React.FC<BinaryMaskRendererProps> = ({
 
           setIsReady(true);
           if (onLoaded) onLoaded();
+          requestAnimationFrame(renderFrame);
         })
         .catch((err) => {
           console.error('Failed to load transformation assets:', err);
         });
     };
 
-    if (typeof IntersectionObserver !== 'undefined') {
-      const observer = new IntersectionObserver(
-        (entries) => {
-          if (entries[0]?.isIntersecting) {
-            observer.disconnect();
-            startLoadingAssets();
-          }
-        },
-        { rootMargin: '350px' }
-      );
-      observer.observe(canvas);
-      return () => {
-        isMounted = false;
-        observer.disconnect();
-      };
-    } else {
-      startLoadingAssets();
-      return () => {
-        isMounted = false;
-      };
-    }
-  }, [onLoaded]);
+    startLoadingAssets();
 
-  // 2. High-Performance Render Loop
-  const renderFrame = useCallback(() => {
-    const canvas = canvasRef.current;
-    if (!canvas || !topImgRef.current || !bottomImgRef.current || !sampledGridRef.current) {
-      return;
-    }
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    // Smoothly interpolate pointer position (ease factor)
-    pointerPos.current.x += (targetPointerPos.current.x - pointerPos.current.x) * 0.22;
-    pointerPos.current.y += (targetPointerPos.current.y - pointerPos.current.y) * 0.22;
-
-    // Smoothly interpolate active intensity for entry/exit
-    const targetIntensity = isPointerActive.current ? 1 : 0;
-    activeIntensity.current += (targetIntensity - activeIntensity.current) * 0.12;
-
-    const time = (Date.now() - startTime.current) * 0.001;
-    const currentRadius = starkConfig.engine.maskRadius * activeIntensity.current;
-
-    drawBinaryTransformation(
-      ctx,
-      topImgRef.current,
-      bottomImgRef.current,
-      sampledGridRef.current,
-      {
-        cursorX: pointerPos.current.x,
-        cursorY: pointerPos.current.y,
-        cursorActive: activeIntensity.current > 0.01,
-        maskRadius: currentRadius,
-        maskFeather: starkConfig.engine.maskFeather,
-        scrollProgress,
-        time,
-        particleSize: starkConfig.engine.particleFontSize,
-        accentGold: starkConfig.engine.accentGold,
-      },
-      starkConfig.engine.defaultWidth,
-      starkConfig.engine.defaultHeight
-    );
-
-    // Continue loop if active, transforming via scroll, or fading out
-    const needsContinuousLoop =
-      isPointerActive.current ||
-      activeIntensity.current > 0.01 ||
-      (scrollProgress > 0.01 && scrollProgress < 0.99);
-
-    if (needsContinuousLoop) {
-      animationFrameId.current = requestAnimationFrame(renderFrame);
-    } else {
-      animationFrameId.current = null;
-    }
-  }, [scrollProgress]);
-
-  // Trigger render on scroll update
-  useEffect(() => {
-    if (!isReady) return;
-    if (!animationFrameId.current) {
-      animationFrameId.current = requestAnimationFrame(renderFrame);
-    }
-  }, [scrollProgress, isReady, renderFrame]);
+    return () => {
+      isMounted = false;
+    };
+  }, [onLoaded, renderFrame]);
 
   // Setup Canvas Dimensions with HiDPI support
   useEffect(() => {

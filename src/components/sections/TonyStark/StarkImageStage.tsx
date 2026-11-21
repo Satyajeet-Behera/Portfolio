@@ -1,17 +1,21 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { BinaryMaskRenderer } from './BinaryMaskRenderer';
+import { starkConfig } from './stark-config';
 import styles from './StarkImageStage.module.scss';
 
 interface StarkImageStageProps {
   scrollProgress: number; // 0.0 to 1.0 from GSAP ScrollTrigger
   className?: string;
+  onLoaded?: () => void;
 }
 
 export const StarkImageStage: React.FC<StarkImageStageProps> = ({
   scrollProgress,
   className,
+  onLoaded: onLoadedProp,
 }) => {
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -26,7 +30,10 @@ export const StarkImageStage: React.FC<StarkImageStageProps> = ({
         <div className={styles.canvasContainer}>
           <BinaryMaskRenderer
             scrollProgress={scrollProgress}
-            onLoaded={() => setIsLoaded(true)}
+            onLoaded={() => {
+              setIsLoaded(true);
+              if (onLoadedProp) onLoadedProp();
+            }}
             className={styles.canvas}
           />
         </div>
@@ -34,7 +41,14 @@ export const StarkImageStage: React.FC<StarkImageStageProps> = ({
         {/* Fallback & Initial State preloader */}
         {!isLoaded && (
           <div className={styles.preloaderOverlay} aria-hidden="true">
-            <div className={styles.preloaderPulse} />
+            <Image
+              src={starkConfig.images.tonyStark.src}
+              alt={starkConfig.images.tonyStark.alt}
+              width={starkConfig.images.tonyStark.width}
+              height={starkConfig.images.tonyStark.height}
+              loading="lazy"
+              className={styles.preloaderImage}
+            />
           </div>
         )}
 
