@@ -1,0 +1,21 @@
+@use '@/styles/variables' as *;
+@use '@/styles/breakpoints' as *;
+
+.container {
+  width: 100%;
+  max-width: $container-max-width;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: $container-padding-mobile;
+  padding-right: $container-padding-mobile;
+
+  @include screen-above($bp-tablet) {
+    padding-left: $container-padding-tablet;
+    padding-right: $container-padding-tablet;
+  }
+
+  @include screen-above($bp-desktop) {
+    padding-left: $container-padding-desktop;
+    padding-right: $container-padding-desktop;
+  }
+}

@@ -1,0 +1,29 @@
+// Responsive Breakpoint Tokens & Mixins
+
+$bp-mobile-sm: 360px;
+$bp-mobile: 390px;
+$bp-mobile-lg: 430px;
+$bp-tablet-sm: 640px;
+$bp-tablet: 768px;
+$bp-laptop: 1024px;
+$bp-desktop: 1280px;
+$bp-desktop-lg: 1440px;
+$bp-desktop-xl: 1920px;
+
+@mixin screen-above($breakpoint) {
+  @media screen and (min-width: #{$breakpoint}) {
+    @content;
+  }
+}
+
+@mixin screen-below($breakpoint) {
+  @media screen and (max-width: #{$breakpoint - 1px}) {
+    @content;
+  }
+}
+
+@mixin screen-between($min, $max) {
+  @media screen and (min-width: #{$min}) and (max-width: #{$max - 1px}) {
+    @content;
+  }
+}

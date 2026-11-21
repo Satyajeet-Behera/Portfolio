@@ -1,0 +1,30 @@
+// Typography Styles & Mixins
+
+@use 'variables' as *;
+@use 'breakpoints' as *;
+
+@mixin font-display {
+  font-family: $font-display;
+  letter-spacing: -0.03em;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+}
+
+@mixin font-sans {
+  font-family: $font-sans;
+  letter-spacing: -0.01em;
+}
+
+@mixin font-mono {
+  font-family: $font-mono;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+// Fluid typography utility
+@mixin fluid-type($min-size, $max-size, $min-vw: 360px, $max-vw: 1440px) {
+  font-size: clamp(
+    #{$min-size},
+    calc(#{$min-size} + #{($max-size - $min-size)} * ((100vw - #{$min-vw}) / #{($max-vw - $min-vw)})),
+    #{$max-size}
+  );
+}

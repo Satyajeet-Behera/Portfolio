@@ -1,0 +1,82 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: $font-sans;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all $transition-medium;
+  text-decoration: none;
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+
+  @include focus-visible-ring;
+}
+
+// Sizes
+.sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.8125rem;
+}
+
+.md {
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  letter-spacing: -0.01em;
+}
+
+.lg {
+  padding: 0.9375rem 2rem;
+  font-size: 1rem;
+}
+
+// Variants
+.primary {
+  background-color: $color-text-primary;
+  color: $color-bg-base;
+  border: 1px solid transparent;
+
+  &:hover {
+    background-color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(255, 255, 255, 0.12);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.secondary {
+  background-color: transparent;
+  color: $color-text-primary;
+  border: 1px solid $color-border-medium;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.04);
+    border-color: $color-accent-gold;
+    color: $color-accent-gold-light;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.ghost {
+  background-color: transparent;
+  color: $color-text-secondary;
+  border: 1px solid transparent;
+
+  &:hover {
+    color: $color-text-primary;
+    background-color: rgba(255, 255, 255, 0.04);
+  }
+}

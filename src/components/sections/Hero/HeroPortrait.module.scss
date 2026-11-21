@@ -1,0 +1,141 @@
+@use '@/styles/variables' as *;
+@use '@/styles/breakpoints' as *;
+@use '@/styles/mixins' as *;
+
+.wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 580px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+// Subtle ambient back-glow reflecting the warm desk lamp
+.ambientGlow {
+  position: absolute;
+  top: 15%;
+  left: 10%;
+  width: 70%;
+  height: 70%;
+  background: radial-gradient(
+    circle,
+    rgba(197, 160, 89, 0.12) 0%,
+    rgba(197, 160, 89, 0.03) 50%,
+    transparent 75%
+  );
+  filter: blur(48px);
+  pointer-events: none;
+  z-index: 0;
+  transform: translateZ(0);
+}
+
+.frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 12px;
+  background-color: #050507;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 
+    0 20px 40px -15px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(197, 160, 89, 0.12);
+  overflow: hidden;
+  z-index: 1;
+  transition: border-color $transition-medium, box-shadow $transition-medium;
+
+  &:hover {
+    border-color: rgba(197, 160, 89, 0.35);
+    box-shadow: 
+      0 24px 48px -12px rgba(0, 0, 0, 0.8),
+      0 0 24px rgba(197, 160, 89, 0.12);
+  }
+}
+
+.mediaContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 25%;
+  display: block;
+  transform: scale(1.001);
+  transition: transform $transition-slow;
+}
+
+.frame:hover .image {
+  transform: scale(1.02);
+}
+
+// Edge feathering to seamlessly blend with the deep black surrounding space
+.vignetteOverlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 65%,
+    rgba(8, 8, 10, 0.4) 100%
+  );
+  box-shadow: inset 0 0 20px rgba(8, 8, 10, 0.6);
+}
+
+// Precision corner accents
+.corner {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  pointer-events: none;
+  z-index: 2;
+  border-color: rgba(197, 160, 89, 0.4);
+  transition: border-color $transition-fast;
+}
+
+.frame:hover .corner {
+  border-color: rgba(197, 160, 89, 0.8);
+}
+
+.cornerTL {
+  top: 8px;
+  left: 8px;
+  border-top: 1px solid;
+  border-left: 1px solid;
+}
+
+.cornerTR {
+  top: 8px;
+  right: 8px;
+  border-top: 1px solid;
+  border-right: 1px solid;
+}
+
+.cornerBL {
+  bottom: 8px;
+  left: 8px;
+  border-bottom: 1px solid;
+  border-left: 1px solid;
+}
+
+.cornerBR {
+  bottom: 8px;
+  right: 8px;
+  border-bottom: 1px solid;
+  border-right: 1px solid;
+}
+
+@include screen-below($bp-tablet) {
+  .wrapper {
+    max-width: 100%;
+  }
+
+  .frame {
+    border-radius: 10px;
+  }
+}

@@ -1,0 +1,339 @@
+@use '@/styles/variables' as *;
+@use '@/styles/breakpoints' as *;
+@use '@/styles/mixins' as *;
+@use '@/styles/typography' as *;
+
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding-top: calc(#{$header-height} + 2rem);
+  padding-bottom: 2.5rem;
+  overflow: hidden;
+
+  @include screen-below($bp-tablet) {
+    min-height: auto;
+    padding-top: calc(#{$header-height-mobile} + 1.5rem);
+    padding-bottom: 2rem;
+  }
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: calc(100vh - #{$header-height} - 4.5rem);
+
+  @include screen-below($bp-tablet) {
+    min-height: auto;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  align-items: center;
+  gap: 3.5rem;
+  margin-top: auto;
+  margin-bottom: auto;
+  padding: 1.5rem 0;
+
+  @include screen-below($bp-laptop) {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  @include screen-below($bp-tablet) {
+    gap: 2.25rem;
+    padding: 0.5rem 0;
+  }
+}
+
+// Left Column: Text & Content
+.contentCol {
+  display: flex;
+  flex-direction: column;
+  z-index: $z-base;
+  animation: heroTextFadeIn 0.8s $ease-out-cubic both;
+
+  @include screen-below($bp-laptop) {
+    order: 1;
+    text-align: left;
+  }
+}
+
+.eyebrowWrapper {
+  margin-bottom: 1.5rem;
+
+  @include screen-below($bp-tablet) {
+    margin-bottom: 1.125rem;
+  }
+}
+
+.heading {
+  @include font-display;
+  font-weight: 700;
+  line-height: 1.1;
+  color: $color-text-primary;
+  margin-bottom: 1.5rem;
+
+  // Fluid heading scaling
+  @include fluid-type(2.25rem, 4.25rem, $bp-mobile-sm, $bp-desktop-lg);
+
+  @include screen-below($bp-tablet) {
+    line-height: 1.15;
+    margin-bottom: 1.25rem;
+  }
+}
+
+.greeting {
+  font-weight: 500;
+  color: #c9c9d1;
+}
+
+.highlightName {
+  font-weight: 800;
+  background: linear-gradient(135deg, #ffffff 0%, #ececed 45%, $color-accent-gold-light 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+  letter-spacing: -0.025em;
+  text-shadow: 0 0 30px rgba(197, 160, 89, 0.15);
+}
+
+.period {
+  color: $color-accent-gold;
+  -webkit-text-fill-color: $color-accent-gold;
+}
+
+.description {
+  @include font-sans;
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: $color-text-secondary;
+  max-width: 36rem;
+  margin-bottom: 2.25rem;
+
+  @include screen-below($bp-tablet) {
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    margin-bottom: 1.75rem;
+  }
+}
+
+.actionRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.primaryAction {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.8125rem 1.625rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(197, 160, 89, 0.12) 100%);
+  color: $color-text-primary;
+  border: 1px solid rgba(197, 160, 89, 0.35);
+  border-radius: 8px;
+  font-family: $font-sans;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  transition: all $transition-medium;
+
+  @include focus-visible-ring;
+
+  &:hover {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(197, 160, 89, 0.22) 100%);
+    border-color: $color-accent-gold-light;
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(197, 160, 89, 0.2);
+
+    .actionIcon {
+      transform: translateY(2px);
+    }
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.actionIcon {
+  color: $color-accent-gold-light;
+  transition: transform $transition-fast;
+}
+
+// Right Column: Hero Portrait
+.portraitCol {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: heroPortraitFadeIn 1s $ease-out-cubic 0.2s both;
+
+  @include screen-below($bp-laptop) {
+    order: 2;
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+}
+
+// Bottom Editorial Bar & Scroll Cue
+.bottomBar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+  padding-top: 2rem;
+  margin-top: 1rem;
+  border-top: 1px solid $color-border-subtle;
+  animation: heroBottomFadeIn 1.1s $ease-out-cubic 0.35s both;
+
+  @include screen-below($bp-tablet) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+    padding-top: 1.5rem;
+    margin-top: 2rem;
+  }
+}
+
+.quoteWrapper {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  max-width: 42rem;
+}
+
+.dividerLine {
+  width: 2rem;
+  height: 1px;
+  background-color: $color-accent-gold;
+  opacity: 0.6;
+  flex-shrink: 0;
+
+  @include screen-below($bp-tablet) {
+    display: none;
+  }
+}
+
+.bottomQuote {
+  @include font-sans;
+  font-size: 0.875rem;
+  color: $color-text-secondary;
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+  font-style: italic;
+
+  @include screen-below($bp-tablet) {
+    font-size: 0.8125rem;
+  }
+}
+
+.quoteAccent {
+  color: $color-accent-gold;
+  font-weight: 600;
+  margin: 0 0.15rem;
+}
+
+.scrollCueWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+  color: $color-text-muted;
+
+  @include screen-below($bp-tablet) {
+    align-self: flex-start;
+  }
+}
+
+.scrollText {
+  @include font-mono;
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+}
+
+.scrollTrack {
+  width: 16px;
+  height: 28px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  justify-content: center;
+  padding-top: 4px;
+}
+
+.scrollPill {
+  width: 4px;
+  height: 6px;
+  border-radius: 2px;
+  background-color: $color-accent-gold;
+  animation: scrollBounce 2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+// Refined Entrance Animations
+@keyframes heroTextFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroPortraitFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(32px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes heroBottomFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scrollBounce {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(8px);
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+// Accessibility: Reduced Motion Override
+@media (prefers-reduced-motion: reduce) {
+  .contentCol,
+  .portraitCol,
+  .bottomBar,
+  .scrollPill,
+  .primaryAction,
+  .actionIcon {
+    animation: none !important;
+    transition: none !important;
+  }
+}

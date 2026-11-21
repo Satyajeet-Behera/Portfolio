@@ -1,0 +1,113 @@
+// Global Styles — Satyajeet Behera Portfolio
+
+@use '../styles/variables' as *;
+@use '../styles/breakpoints' as *;
+@use '../styles/mixins' as *;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  color-scheme: dark;
+}
+
+body {
+  background-color: $color-bg-base;
+  color: $color-text-primary;
+  font-family: $font-sans;
+  font-weight: 400;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  position: relative;
+
+  // Restrained ambient glow overlay
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 65vw;
+    height: 65vh;
+    background: radial-gradient(
+      ellipse at top right,
+      rgba(197, 160, 89, 0.04) 0%,
+      rgba(8, 8, 10, 0) 70%
+    );
+    pointer-events: none;
+    z-index: $z-negative;
+  }
+}
+
+// Accessible Skip Link
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 1.5rem;
+  background-color: $color-accent-gold;
+  color: $color-text-inverse;
+  padding: 0.75rem 1.25rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border-radius: 4px;
+  z-index: $z-modal;
+  transition: top $transition-fast;
+  text-decoration: none;
+
+  &:focus {
+    top: 1.5rem;
+    outline: 2px solid $color-text-primary;
+  }
+}
+
+// Text Selection
+::selection {
+  background-color: rgba(197, 160, 89, 0.35);
+  color: #ffffff;
+}
+
+// Interactive Elements Base
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  background: none;
+  border: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+// Accessibility: Respect Reduced Motion
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

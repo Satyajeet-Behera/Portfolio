@@ -1,0 +1,54 @@
+// Design System Variables — Satyajeet Behera Portfolio
+
+// Color Palette — Sophisticated Dark Luxury & Precision
+$color-bg-base: #08080a;
+$color-bg-surface: #0e0e12;
+$color-bg-elevated: #14141a;
+$color-bg-card: rgba(18, 18, 24, 0.7);
+
+$color-text-primary: #f5f5f7;
+$color-text-secondary: #9d9da6;
+$color-text-muted: #94949f; // Enhanced contrast for WCAG AAA compliance (>= 4.5:1 against #08080a)
+$color-text-inverse: #08080a;
+
+// Restrained Metallic Gold Accents
+$color-accent-gold: #c5a059;
+$color-accent-gold-light: #dfba75;
+$color-accent-gold-dark: #9e7d38;
+$color-accent-gold-subtle: rgba(197, 160, 89, 0.12);
+$color-accent-gold-glow: rgba(197, 160, 89, 0.06);
+
+// Borders & Dividers
+$color-border-subtle: rgba(255, 255, 255, 0.06);
+$color-border-medium: rgba(255, 255, 255, 0.1);
+$color-border-accent: rgba(197, 160, 89, 0.25);
+
+// Typography System
+$font-sans: var(--font-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+$font-display: var(--font-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+$font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+
+// Layout & Spacing
+$container-max-width: 1320px;
+$container-padding-mobile: 1.25rem;    // 20px
+$container-padding-tablet: 2rem;       // 32px
+$container-padding-desktop: 3rem;      // 48px
+
+$header-height: 5rem;                  // 80px
+$header-height-mobile: 4.25rem;        // 68px
+
+// Z-index hierarchy
+$z-negative: -1;
+$z-base: 1;
+$z-elevated: 10;
+$z-header: 100;
+$z-modal: 1000;
+
+// Transitions & Easing
+$ease-out-cubic: cubic-bezier(0.215, 0.61, 0.355, 1);
+$ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+$ease-in-out: cubic-bezier(0.645, 0.045, 0.355, 1);
+
+$transition-fast: 180ms $ease-out-cubic;
+$transition-medium: 320ms $ease-out-cubic;
+$transition-slow: 600ms $ease-out-expo;
