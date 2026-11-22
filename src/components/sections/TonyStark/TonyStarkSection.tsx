@@ -18,6 +18,12 @@ export const TonyStarkSection: React.FC = () => {
   const pinTargetRef = useRef<HTMLDivElement | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
 
+  const handleLoaded = React.useCallback(() => {
+    requestAnimationFrame(() => {
+      ScrollTrigger.refresh();
+    });
+  }, []);
+
   useEffect(() => {
     // Respect reduced motion
     const prefersReducedMotion = window.matchMedia(
@@ -36,11 +42,17 @@ export const TonyStarkSection: React.FC = () => {
         end: isMobile ? '+=900' : starkConfig.scroll.pinDistance,
         pin: pinTargetRef.current,
         pinSpacing: true,
-        scrub: 0.5,
+        scrub: 0.2,
         anticipatePin: 1,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
-          setScrollProgress(self.progress);
+          setScrollProgress(Math.max(0, Math.min(1, self.progress)));
+        },
+        onLeaveBack: () => {
+          setScrollProgress(0);
+        },
+        onLeave: () => {
+          setScrollProgress(1);
         },
       });
     }, sectionRef);
@@ -78,27 +90,24 @@ export const TonyStarkSection: React.FC = () => {
               <div className={styles.progressTracker} aria-hidden="true">
                 <div className={styles.trackerStep}>
                   <span
-                    className={`${styles.stepIndicator}${
-                      scrollProgress < 0.2 ? ` ${styles.stepActive}` : ''
-                    }`}
+                    className={`${styles.stepIndicator}${scrollProgress < 0.2 ? ` ${styles.stepActive}` : ''
+                      }`}
                   />
                   <span className={styles.stepLabel}>01 // TONY STARK</span>
                 </div>
                 <div className={styles.trackerStep}>
                   <span
-                    className={`${styles.stepIndicator}${
-                      scrollProgress >= 0.2 && scrollProgress < 0.75
+                    className={`${styles.stepIndicator}${scrollProgress >= 0.2 && scrollProgress < 0.75
                         ? ` ${styles.stepActive}`
                         : ''
-                    }`}
+                      }`}
                   />
                   <span className={styles.stepLabel}>02 // BINARY CORE</span>
                 </div>
                 <div className={styles.trackerStep}>
                   <span
-                    className={`${styles.stepIndicator}${
-                      scrollProgress >= 0.75 ? ` ${styles.stepActive}` : ''
-                    }`}
+                    className={`${styles.stepIndicator}${scrollProgress >= 0.75 ? ` ${styles.stepActive}` : ''
+                      }`}
                   />
                   <span className={styles.stepLabel}>03 // SATYAJEET BEHERA</span>
                 </div>
@@ -109,11 +118,7 @@ export const TonyStarkSection: React.FC = () => {
             <div className={styles.stageCol}>
               <StarkImageStage
                 scrollProgress={scrollProgress}
-                onLoaded={() => {
-                  requestAnimationFrame(() => {
-                    ScrollTrigger.refresh();
-                  });
-                }}
+                onLoaded={handleLoaded}
               />
             </div>
           </div>

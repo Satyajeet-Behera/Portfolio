@@ -19,6 +19,11 @@ export const StarkImageStage: React.FC<StarkImageStageProps> = ({
 }) => {
   const [isLoaded, setIsLoaded] = useState(false);
 
+  const handleLoaded = React.useCallback(() => {
+    setIsLoaded(true);
+    if (onLoadedProp) onLoadedProp();
+  }, [onLoadedProp]);
+
   return (
     <div className={`${styles.stageWrapper}${className ? ` ${className}` : ''}`}>
       {/* Ambient Arc-Reactor Glow Backdrop */}
@@ -30,10 +35,7 @@ export const StarkImageStage: React.FC<StarkImageStageProps> = ({
         <div className={styles.canvasContainer}>
           <BinaryMaskRenderer
             scrollProgress={scrollProgress}
-            onLoaded={() => {
-              setIsLoaded(true);
-              if (onLoadedProp) onLoadedProp();
-            }}
+            onLoaded={handleLoaded}
             className={styles.canvas}
           />
         </div>

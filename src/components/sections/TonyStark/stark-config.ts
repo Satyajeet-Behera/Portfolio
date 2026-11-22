@@ -37,8 +37,8 @@ export const starkConfig = {
     defaultHeight: 680,
     maskRadius: 135,
     maskFeather: 45,
-    particleStepSize: 7, // Grid sample resolution
-    particleFontSize: 11,
+    particleStepSize: 8, // Calibrated grid sample resolution
+    particleFontSize: 9.5, // Crisp, perfectly spaced binary glyphs
     accentGold: "#c5a059",
     accentGoldLight: "#dfba75",
     reconstructionDuration: 0.6, // seconds to restore Tony Stark after cursor exits

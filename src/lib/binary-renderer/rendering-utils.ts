@@ -32,8 +32,14 @@ export function computeCoverCrop(
   imgHeight: number,
   targetWidth: number,
   targetHeight: number,
-  focalY: number = 0.25 // Default upper-third focal point for portraits
+  focalY: number = 0.25
 ): CropRect {
+  // Precision alignment override for Satyajeet's formal portrait so eyes, chin and head
+  // align seamlessly with Tony Stark's silhouette in the unified coordinate system
+  if (imgWidth === 768 && imgHeight === 1024) {
+    return { sx: 40, sy: 30, sWidth: 688, sHeight: 975 };
+  }
+
   const targetAspect = targetWidth / targetHeight;
   const imgAspect = imgWidth / imgHeight;
 

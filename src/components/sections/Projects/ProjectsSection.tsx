@@ -23,85 +23,47 @@ export const ProjectsSection: React.FC = () => {
     const prefersReducedMotion = window.matchMedia(
       '(prefers-reduced-motion: reduce)'
     ).matches;
-    const isMobile = window.innerWidth <= 1024;
 
-    if (prefersReducedMotion || isMobile || !sectionRef.current || !trackRef.current || !triggerRef.current) {
+    if (prefersReducedMotion || !sectionRef.current || !trackRef.current) {
       return;
     }
 
-    const ctx = gsap.context(() => {
+    const mm = gsap.matchMedia();
+
+    mm.add('(min-width: 1025px)', () => {
       const track = trackRef.current;
       if (!track) return;
 
       // Calculate total horizontal scroll distance dynamically from content width
       const getScrollDistance = () => {
-        return track.scrollWidth - window.innerWidth + 120;
+        return Math.max(0, track.scrollWidth - window.innerWidth + 120);
       };
 
-      // Active center card prominence updater
-      const updateCardProminence = () => {
-        if (!track) return;
-        const cards = track.querySelectorAll<HTMLElement>('.' + styles.projectCard);
-        const viewportCenter = window.innerWidth / 2;
-
-        cards.forEach((card) => {
-          const rect = card.getBoundingClientRect();
-          const cardCenter = rect.left + rect.width / 2;
-          const distFromCenter = Math.abs(cardCenter - viewportCenter);
-          const maxInfluence = rect.width * 0.92;
-
-          // 1.0 at exact center, smoothly easing to 0.0 outside center zone
-          const prominence = Math.max(0, Math.min(1, 1 - distFromCenter / maxInfluence));
-          const easeProminence = prominence * prominence; // Smooth quadratic ease
-
-          const scale = 0.94 + easeProminence * 0.06; // 0.94 -> 1.00
-          const opacity = 0.72 + easeProminence * 0.28; // 0.72 -> 1.00
-          const zIndex = Math.round(easeProminence * 10) + 1;
-
-          gsap.set(card, {
-            scale,
-            opacity,
-            zIndex,
-            force3D: true,
-          });
-        });
-      };
-
-      // Buttery smooth GSAP Timeline with active card scaling
-      const tl = gsap.timeline({
+      // Direct, ultra-responsive, buttery-smooth horizontal glide
+      // Starts IMMEDIATELY when section pins (zero dead-zone delay after Interests)
+      // Uses lightweight 0.15s scrub physics for effortless tactile response
+      const tween = gsap.to(track, {
+        x: () => -getScrollDistance(),
+        ease: 'none',
         scrollTrigger: {
           trigger: sectionRef.current,
           start: 'top top',
-          end: () => `+=${Math.round(getScrollDistance() * 1.15)}`,
+          end: () => `+=${Math.round(getScrollDistance() * 1.05)}`,
           pin: true,
           pinSpacing: true,
-          scrub: 0.5, // Buttery smooth, responsive physics
+          scrub: 0.15, // Instant, buttery smooth 1:1 physical response
           invalidateOnRefresh: true,
           anticipatePin: 1,
-          onUpdate: updateCardProminence,
         },
       });
 
-      // Brief lead-in so visitor sees Card 01 and its action buttons cleanly before horizontal glide begins
-      tl.to({}, { duration: 0.08 });
-
-      // Hardware-accelerated glide across all project cards
-      tl.to(track, {
-        x: () => -getScrollDistance(),
-        ease: 'none',
-        duration: 1,
-        force3D: true,
-      });
-
-      // Brief lead-out on future lab continuation card
-      tl.to({}, { duration: 0.08 });
-
-      // Run initial layout calculation
-      updateCardProminence();
-    }, sectionRef);
+      return () => {
+        tween.kill();
+      };
+    });
 
     return () => {
-      ctx.revert();
+      mm.revert();
     };
   }, []);
 

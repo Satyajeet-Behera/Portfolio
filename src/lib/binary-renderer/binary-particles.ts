@@ -4,12 +4,15 @@
  * Implements:
  * 1. Unified focal-aware cover crop coordinate alignment (shared coordinate system).
  * 2. Localized cursor disintegration with smooth entry/reconstruction.
- * 3. 5-State continuous and reversible scroll-driven transformation:
- *    - State 1: Complete Tony Stark photograph intact on obsidian stage.
- *    - State 2: Progressive digital dissolution wave spreading across the figure.
- *    - State 3: Complete Binary — full silhouette and facial contours in luminous binary code.
- *    - State 4: Personal Image Reveal — binary matrix disperses into embers as Satyajeet emerges.
- *    - State 5: Complete Satyajeet Behera photograph in crisp, pristine fidelity.
+ * 3. 5-State continuous and completely reversible scroll-driven transformation:
+ *    - State 1 (0.00 - 0.10): Complete Tony Stark photograph intact on obsidian stage. (Cursor hover active)
+ *    - State 2 (0.10 - 0.60): Progressive digital dissolution wave converting Tony Stark into luminous binary code,
+ *                           with Satyajeet Behera's portrait emerging synchronously in the dissolved wake.
+ *    - State 3 (0.60 - 0.75): Complete Radiant Binary Matrix — full silhouette and facial contours in glowing code over Satyajeet.
+ *    - State 4 (0.75 - 0.92): Personal Image Reveal — binary matrix disperses outward into embers as Satyajeet emerges crisp.
+ *    - State 5 (0.92 - 1.00): Complete Satyajeet Behera photograph in crisp, pristine fidelity.
+ *
+ * Fully Reversible: Scrolling backwards from 1.0 down to 0.0 seamlessly reconstructs Tony Stark back to 100% original.
  */
 
 import { SampledGrid } from './image-sampler';
@@ -21,7 +24,7 @@ export interface BinaryRenderOptions {
   cursorActive: boolean;
   maskRadius: number;
   maskFeather: number;
-  scrollProgress: number; // 0.0 = Tony Stark, 0.55 = Complete Binary, 1.0 = Satyajeet Behera
+  scrollProgress: number; // 0.0 = Tony Stark, 0.60 = Complete Binary Matrix, 1.0 = Satyajeet Behera
   time: number;
   particleSize: number;
   accentGold: string;
@@ -59,7 +62,7 @@ export function drawBinaryTransformation(
     bottomImage.naturalHeight || bottomImage.height,
     canvasWidth,
     canvasHeight,
-    0.22 // Satyajeet focal point aligned with upper chest & eyes
+    0.22
   );
 
   const cropTop = computeCoverCrop(
@@ -67,39 +70,36 @@ export function drawBinaryTransformation(
     topImage.naturalHeight || topImage.height,
     canvasWidth,
     canvasHeight,
-    0.25 // Tony Stark focal point aligned with head & eyes
+    0.25
   );
 
-  // Allocate / reuse offscreen canvas buffers for multi-pass compositing
-  const bufA = providedTempCanvas || document.createElement('canvas');
-  if (bufA.width !== canvasWidth || bufA.height !== canvasHeight) {
-    bufA.width = canvasWidth;
-    bufA.height = canvasHeight;
+  // Allocate / reuse persistent offscreen canvas buffers for multi-pass compositing
+  const bufTop = providedTempCanvas || document.createElement('canvas');
+  if (bufTop.width !== canvasWidth || bufTop.height !== canvasHeight) {
+    bufTop.width = canvasWidth;
+    bufTop.height = canvasHeight;
   }
-  const ctxA = bufA.getContext('2d');
+  const ctxTop = bufTop.getContext('2d');
+  if (!ctxTop) return;
 
-  const bufB = providedTempCanvas2 || document.createElement('canvas');
-  if (bufB.width !== canvasWidth || bufB.height !== canvasHeight) {
-    bufB.width = canvasWidth;
-    bufB.height = canvasHeight;
+  const bufSatya = providedTempCanvas2 || document.createElement('canvas');
+  if (bufSatya.width !== canvasWidth || bufSatya.height !== canvasHeight) {
+    bufSatya.width = canvasWidth;
+    bufSatya.height = canvasHeight;
   }
-  const ctxB = bufB.getContext('2d');
-
-  if (!ctxA || !ctxB) return;
+  const ctxSatya = bufSatya.getContext('2d');
+  if (!ctxSatya) return;
 
   // ---------------------------------------------------------------------------
   // PASS 1: Base Layer (Satyajeet Behera)
-  // Revealed selectively through localized cursor hole or scroll transformation
+  // Revealed either by:
+  // (A) Localized cursor hover: circular feathered hole around (cursorX, cursorY)
+  // (B) Scroll dissolution wave: revealed from top-down above the wave front
+  // (C) Full frame at high scroll progress (scrollProgress >= 0.88)
   // ---------------------------------------------------------------------------
-  const satyaAlpha = smoothstep(0.40, 0.88, scrollProgress);
-  const showSatyaScroll = scrollProgress > 0.05;
-  const showSatyaCursor = cursorActive && maskRadius > 2;
-
-  if (showSatyaScroll || showSatyaCursor) {
-    ctxA.clearRect(0, 0, canvasWidth, canvasHeight);
-
-    // Draw Satyajeet portrait
-    ctxA.drawImage(
+  if (scrollProgress >= 0.90) {
+    // State 5: Full Satyajeet in pristine clarity
+    ctx.drawImage(
       bottomImage,
       cropBottom.sx,
       cropBottom.sy,
@@ -110,81 +110,89 @@ export function drawBinaryTransformation(
       canvasWidth,
       canvasHeight
     );
+  } else {
+    ctxSatya.clearRect(0, 0, canvasWidth, canvasHeight);
+    let hasSatyaReveal = false;
 
-    // Mask Satyajeet in State 1 and early State 2 so only the active portal is visible
-    if (scrollProgress < 0.85) {
-      ctxA.globalCompositeOperation = 'destination-in';
-
-      // (A) If scroll has started, reveal with a soft deconstruction wave
-      if (scrollProgress > 0.05) {
-        const waveFront = ((scrollProgress - 0.05) / 0.40) * (canvasHeight + 120) - 60;
-        const waveGrad = ctxA.createLinearGradient(0, Math.max(0, waveFront - 80), 0, Math.min(canvasHeight, waveFront + 80));
-        waveGrad.addColorStop(0, 'rgba(0,0,0,1)');
-        waveGrad.addColorStop(1, `rgba(0,0,0,${satyaAlpha})`);
-
-        ctxA.fillStyle = waveGrad;
-        ctxA.fillRect(0, 0, canvasWidth, canvasHeight);
-      } else {
-        // Pure State 1: Satyajeet is ONLY visible through the localized cursor portal
-        ctxA.fillStyle = 'rgba(0,0,0,0)';
-        ctxA.fillRect(0, 0, canvasWidth, canvasHeight);
-      }
-
-      // (B) Composite localized cursor portal
-      if (showSatyaCursor) {
-        ctxA.globalCompositeOperation = 'source-over';
-        const radGrad = ctxA.createRadialGradient(
-          cursorX,
-          cursorY,
-          Math.max(0, maskRadius - maskFeather),
-          cursorX,
-          cursorY,
-          maskRadius
-        );
-        radGrad.addColorStop(0, 'rgba(0,0,0,1)');
-        radGrad.addColorStop(1, 'rgba(0,0,0,0)');
-
-        // We punch the portal on a clean mask layer
-        ctxB.clearRect(0, 0, canvasWidth, canvasHeight);
-        ctxB.fillStyle = radGrad;
-        ctxB.beginPath();
-        ctxB.arc(cursorX, cursorY, maskRadius, 0, Math.PI * 2);
-        ctxB.fill();
-
-        ctxB.globalCompositeOperation = 'source-in';
-        ctxB.drawImage(
-          bottomImage,
-          cropBottom.sx,
-          cropBottom.sy,
-          cropBottom.sWidth,
-          cropBottom.sHeight,
-          0,
-          0,
-          canvasWidth,
-          canvasHeight
-        );
-
-        // Blend cursor portal into layer A
-        ctxA.globalCompositeOperation = 'source-over';
-        ctxA.drawImage(bufB, 0, 0);
-      }
-
-      ctxA.globalCompositeOperation = 'source-over';
+    // 1. Localized cursor hole with smooth radial feathering
+    if (cursorActive && maskRadius > 2) {
+      const radGrad = ctxSatya.createRadialGradient(
+        cursorX,
+        cursorY,
+        Math.max(0, maskRadius - maskFeather),
+        cursorX,
+        cursorY,
+        maskRadius
+      );
+      radGrad.addColorStop(0, 'rgba(0,0,0,1)');
+      radGrad.addColorStop(1, 'rgba(0,0,0,0)');
+      ctxSatya.fillStyle = radGrad;
+      ctxSatya.beginPath();
+      ctxSatya.arc(cursorX, cursorY, maskRadius, 0, Math.PI * 2);
+      ctxSatya.fill();
+      hasSatyaReveal = true;
     }
 
-    // Paint Satyajeet layer onto main canvas
-    ctx.drawImage(bufA, 0, 0);
+    // 2. Scroll wave reveal (reveals Satyajeet above the wave front)
+    if (scrollProgress > 0.10) {
+      const waveNorm = Math.min(1, (scrollProgress - 0.10) / 0.50);
+      const waveFront = waveNorm * (canvasHeight + 100) - 50;
+
+      ctxSatya.beginPath();
+      ctxSatya.moveTo(0, 0);
+      ctxSatya.lineTo(canvasWidth, 0);
+
+      const step = 10;
+      for (let x = canvasWidth; x >= 0; x -= step) {
+        const wavePerturb =
+          Math.sin(x * 0.024 + time * 3.5) * 14 + Math.cos(x * 0.012 + time * 2) * 8;
+        const currentY = Math.min(canvasHeight + 30, waveFront + wavePerturb);
+        ctxSatya.lineTo(x, currentY);
+      }
+
+      ctxSatya.closePath();
+      ctxSatya.fillStyle = 'rgba(0,0,0,1)';
+      ctxSatya.fill();
+      hasSatyaReveal = true;
+
+      // Expand to full-canvas visibility as scroll progresses past 0.55
+      if (scrollProgress > 0.55) {
+        const fullAlpha = smoothstep(0.55, 0.85, scrollProgress);
+        ctxSatya.fillStyle = `rgba(0, 0, 0, ${fullAlpha})`;
+        ctxSatya.fillRect(0, 0, canvasWidth, canvasHeight);
+      }
+    }
+
+    if (hasSatyaReveal) {
+      ctxSatya.globalCompositeOperation = 'source-in';
+      ctxSatya.drawImage(
+        bottomImage,
+        cropBottom.sx,
+        cropBottom.sy,
+        cropBottom.sWidth,
+        cropBottom.sHeight,
+        0,
+        0,
+        canvasWidth,
+        canvasHeight
+      );
+      ctxSatya.globalCompositeOperation = 'source-over';
+
+      ctx.drawImage(bufSatya, 0, 0);
+    }
   }
 
   // ---------------------------------------------------------------------------
   // PASS 2: Top Layer (Tony Stark Cutout)
-  // Intact in State 1, dissolved by wave in State 2, 0 in States 3-5
+  // Intact in State 1 (scrollProgress <= 0.10).
+  // Dissolves downward into binary code in State 2 (0.10 < scrollProgress < 0.60).
+  // Dissolved completely in States 3-5 (scrollProgress >= 0.65).
   // ---------------------------------------------------------------------------
-  if (scrollProgress < 0.48) {
-    ctxA.clearRect(0, 0, canvasWidth, canvasHeight);
+  if (scrollProgress < 0.65) {
+    ctxTop.clearRect(0, 0, canvasWidth, canvasHeight);
 
     // Draw intact Tony Stark cutout
-    ctxA.drawImage(
+    ctxTop.drawImage(
       topImage,
       cropTop.sx,
       cropTop.sy,
@@ -196,12 +204,11 @@ export function drawBinaryTransformation(
       canvasHeight
     );
 
-    // Punch out localized cursor area and scroll deconstruction wave
-    ctxA.globalCompositeOperation = 'destination-out';
+    ctxTop.globalCompositeOperation = 'destination-out';
 
     // (A) Localized cursor mask hole with smooth radial feathering
     if (cursorActive && maskRadius > 1) {
-      const radGrad = ctxA.createRadialGradient(
+      const radGrad = ctxTop.createRadialGradient(
         cursorX,
         cursorY,
         Math.max(0, maskRadius - maskFeather),
@@ -212,86 +219,84 @@ export function drawBinaryTransformation(
       radGrad.addColorStop(0, 'rgba(0,0,0,1)');
       radGrad.addColorStop(1, 'rgba(0,0,0,0)');
 
-      ctxA.fillStyle = radGrad;
-      ctxA.beginPath();
-      ctxA.arc(cursorX, cursorY, maskRadius, 0, Math.PI * 2);
-      ctxA.fill();
+      ctxTop.fillStyle = radGrad;
+      ctxTop.beginPath();
+      ctxTop.arc(cursorX, cursorY, maskRadius, 0, Math.PI * 2);
+      ctxTop.fill();
     }
 
-    // (B) Scroll deconstruction wave dissolution (State 2)
-    if (scrollProgress > 0.05) {
-      const scrollNorm = (scrollProgress - 0.05) / 0.38; // 0.0 to 1.0 within State 2
-      const waveFront = scrollNorm * (canvasHeight + 140) - 70;
+    // (B) Scroll digital dissolution wave (State 2: 0.10 to 0.60)
+    if (scrollProgress > 0.10) {
+      const waveNorm = Math.min(1, (scrollProgress - 0.10) / 0.50);
+      const waveFront = waveNorm * (canvasHeight + 100) - 50;
 
-      ctxA.beginPath();
-      ctxA.moveTo(0, 0);
-      ctxA.lineTo(canvasWidth, 0);
+      ctxTop.beginPath();
+      ctxTop.moveTo(0, 0);
+      ctxTop.lineTo(canvasWidth, 0);
 
-      const step = 12;
+      const step = 10;
       for (let x = canvasWidth; x >= 0; x -= step) {
-        const wavePerturb = Math.sin(x * 0.022 + time * 3.5) * 16 + Math.cos(x * 0.012 + time * 2) * 8;
-        const currentY = Math.min(canvasHeight + 20, waveFront + wavePerturb);
-        ctxA.lineTo(x, currentY);
+        const wavePerturb =
+          Math.sin(x * 0.024 + time * 3.5) * 14 + Math.cos(x * 0.012 + time * 2) * 8;
+        const currentY = Math.min(canvasHeight + 30, waveFront + wavePerturb);
+        ctxTop.lineTo(x, currentY);
       }
 
-      ctxA.closePath();
-      ctxA.fillStyle = 'rgba(0,0,0,1)';
-      ctxA.fill();
+      ctxTop.closePath();
+      ctxTop.fillStyle = 'rgba(0,0,0,1)';
+      ctxTop.fill();
 
       // Soft edge feather along wave front
-      const featherHeight = 36;
-      const gradY1 = Math.max(0, waveFront - 12);
+      const featherHeight = 24;
+      const gradY1 = Math.max(0, waveFront - 8);
       const gradY2 = Math.min(canvasHeight, waveFront + featherHeight);
       if (gradY2 > gradY1) {
-        const waveGrad = ctxA.createLinearGradient(0, gradY1, 0, gradY2);
+        const waveGrad = ctxTop.createLinearGradient(0, gradY1, 0, gradY2);
         waveGrad.addColorStop(0, 'rgba(0,0,0,0.85)');
         waveGrad.addColorStop(1, 'rgba(0,0,0,0)');
-        ctxA.fillStyle = waveGrad;
-        ctxA.fillRect(0, gradY1, canvasWidth, gradY2 - gradY1);
+        ctxTop.fillStyle = waveGrad;
+        ctxTop.fillRect(0, gradY1, canvasWidth, gradY2 - gradY1);
       }
     }
 
-    ctxA.globalCompositeOperation = 'source-over';
+    ctxTop.globalCompositeOperation = 'source-over';
 
-    // Fade top image out towards end of State 2 as it enters State 3
-    if (scrollProgress > 0.38) {
-      const fadeOut = 1 - (scrollProgress - 0.38) / 0.10;
+    // Fade top image gently as wave completes around 0.50 - 0.65
+    const tonyFade = 1 - smoothstep(0.50, 0.65, scrollProgress);
+    if (tonyFade < 0.999) {
       ctx.save();
-      ctx.globalAlpha = Math.max(0, Math.min(1, fadeOut));
-      ctx.drawImage(bufA, 0, 0);
+      ctx.globalAlpha = Math.max(0, tonyFade);
+      ctx.drawImage(bufTop, 0, 0);
       ctx.restore();
     } else {
-      ctx.drawImage(bufA, 0, 0);
+      ctx.drawImage(bufTop, 0, 0);
     }
   }
 
   // ---------------------------------------------------------------------------
   // PASS 3: High-Tech Binary Glyph System (0 & 1 Particles)
-  // State 1: Localized disintegration around cursor
-  // State 2: Active wave edge digital embers
-  // State 3: Complete Binary — whole figure rendered in radiant code matrix!
-  // State 4: Dispersal into floating embers
-  // State 5: Quiescent (faded to 0)
+  // State 1: Localized disintegration around cursor rim
+  // State 2: Progressive dissolution wave converting Tony Stark into luminous binary code!
+  // State 3: Complete Radiant Binary Matrix — entire silhouette shines in code!
+  // State 4: Dispersal into floating embers as Satyajeet emerges
+  // State 5: Quiescent (0 particles)
   // ---------------------------------------------------------------------------
-  if (scrollProgress < 0.92 || (cursorActive && maskRadius > 1)) {
+  if (scrollProgress < 0.94 || (cursorActive && maskRadius > 1)) {
     ctx.save();
-    ctx.font = `600 ${particleSize}px ui-monospace, "SF Mono", Menlo, Consolas, monospace`;
+    ctx.font = `700 ${particleSize}px ui-monospace, "SF Mono", Menlo, Consolas, monospace`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
     const samples = sampledGrid.samples;
     const count = samples.length;
 
-    // Precalculate scroll transformation wave positions
-    const inState2 = scrollProgress >= 0.05 && scrollProgress < 0.45;
-    const inState3 = scrollProgress >= 0.45 && scrollProgress < 0.65;
-    const inState4 = scrollProgress >= 0.65 && scrollProgress < 0.88;
+    const inState2 = scrollProgress >= 0.10 && scrollProgress < 0.60;
+    const inState3 = scrollProgress >= 0.60 && scrollProgress < 0.75;
+    const inState4 = scrollProgress >= 0.75 && scrollProgress < 0.92;
 
-    const waveFront = inState2
-      ? ((scrollProgress - 0.05) / 0.40) * (canvasHeight + 140) - 70
-      : 0;
-
-    const state4Progress = inState4 ? (scrollProgress - 0.65) / 0.23 : 0;
+    const waveNorm = inState2 ? (scrollProgress - 0.10) / 0.50 : 0;
+    const waveFront = inState2 ? waveNorm * (canvasHeight + 100) - 50 : 0;
+    const state4Progress = inState4 ? (scrollProgress - 0.75) / 0.17 : 0;
 
     for (let i = 0; i < count; i++) {
       const s = samples[i];
@@ -299,52 +304,53 @@ export function drawBinaryTransformation(
       let offsetX = 0;
       let offsetY = 0;
 
-      // 1. CURSOR INFLUENCE (Localized Disintegration)
-      if (cursorActive && maskRadius > 3) {
+      // 1. CURSOR INFLUENCE (Localized Disintegration at boundary rim)
+      if (cursorActive && maskRadius > 3 && scrollProgress < 0.35) {
         const dx = s.x - cursorX;
         const dy = s.y - cursorY;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
-        if (dist < maskRadius + 18) {
-          // Sharp rim concentration + active disintegration interior
-          const rimDist = Math.abs(dist - (maskRadius - maskFeather * 0.4));
-          const rimIntensity = 1 - smoothstep(0, maskFeather, rimDist);
-          const coreIntensity = (1 - smoothstep(0, maskRadius, dist)) * 0.65;
-          const localIntensity = Math.max(rimIntensity, coreIntensity);
+        const rimCenter = maskRadius - maskFeather * 0.35;
+        const rimDist = Math.abs(dist - rimCenter);
+        const rimBandWidth = 28;
 
-          if (localIntensity > intensity) {
-            intensity = localIntensity;
-            // Jitter / drift particles away from cursor center
+        if (rimDist < rimBandWidth) {
+          const rimFactor = 1 - rimDist / rimBandWidth;
+          const rimIntensity = Math.pow(rimFactor, 1.2) * 1.35;
+          if (rimIntensity > intensity) {
+            intensity = rimIntensity;
             const pushAngle = Math.atan2(dy, dx);
-            const pushDist = (1 - dist / (maskRadius + 18)) * 6;
-            offsetX = Math.cos(pushAngle) * pushDist + Math.sin(time * 5 + s.offset) * 1.5;
-            offsetY = Math.sin(pushAngle) * pushDist + Math.cos(time * 5 + s.offset) * 1.5;
+            const drift = Math.sin(time * 6 + s.offset) * 2;
+            offsetX = Math.cos(pushAngle) * 3.5 + drift;
+            offsetY = Math.sin(pushAngle) * 3.5 + drift;
           }
         }
       }
 
-      // 2. SCROLL INFLUENCE: STATE 2 (Progressive Wave Dissolution)
+      // 2. SCROLL STATE 2: Progressive Dissolution Wave into Binary Code
+      // As the wave sweeps down, every pixel above the wave converts into radiant binary digits!
       if (inState2) {
-        const wavePerturb = Math.sin(s.x * 0.022 + time * 3.5) * 16 + Math.cos(s.x * 0.012 + time * 2) * 8;
+        const wavePerturb =
+          Math.sin(s.x * 0.024 + time * 3.5) * 14 + Math.cos(s.x * 0.012 + time * 2) * 8;
         const targetWaveY = waveFront + wavePerturb;
-        const distToWave = s.y - targetWaveY;
 
-        if (distToWave >= -75 && distToWave <= 45) {
-          const normDist = Math.abs(distToWave) / 60;
-          const waveIntensity = (1 - normDist) * 1.4;
+        // Dissolved region above the wave
+        if (s.y <= targetWaveY) {
+          const distAboveWave = targetWaveY - s.y;
+          const energeticBand = Math.max(0, 1 - distAboveWave / 140);
+          const waveIntensity = s.alpha * (0.95 + energeticBand * 0.40);
           if (waveIntensity > intensity) {
             intensity = waveIntensity;
-            offsetX = Math.sin(time * 6 + s.offset) * 2.5;
-            offsetY = Math.cos(time * 6 + s.offset) * 2.5 - 2;
+            offsetX = Math.sin(time * 5 + s.offset) * (1.2 + energeticBand * 2.0);
+            offsetY = Math.cos(time * 5 + s.offset) * (1.2 + energeticBand * 2.0);
           }
         }
       }
 
-      // 3. SCROLL INFLUENCE: STATE 3 (Complete Binary Matrix)
-      // Every single pixel of Tony Stark becomes a luminous binary glyph!
+      // 3. SCROLL STATE 3: Complete Radiant Binary Matrix
+      // The entire silhouette and face of Tony Stark shine in glowing binary digits
       if (inState3) {
-        // Ambient holographic shimmer wave traversing the silhouette
-        const matrixWave = Math.sin(time * 3 + s.y * 0.04 + s.offset) * 0.2 + 0.85;
+        const matrixWave = Math.sin(time * 3 + s.y * 0.035 + s.offset) * 0.2 + 0.95;
         const fullBinaryIntensity = s.alpha * matrixWave;
         if (fullBinaryIntensity > intensity) {
           intensity = fullBinaryIntensity;
@@ -353,37 +359,34 @@ export function drawBinaryTransformation(
         }
       }
 
-      // 4. SCROLL INFLUENCE: STATE 4 (Personal Reveal / Dispersal)
-      // Matrix disperses outward into floating digital embers as Satyajeet emerges
+      // 4. SCROLL STATE 4: Binary Matrix Disperses Outward into Embers
       if (inState4) {
         const fade = (1 - state4Progress) * s.alpha;
         if (fade > intensity) {
           intensity = fade;
-          // Disperse along precomputed directional vectors
-          offsetX = s.dispersionX * state4Progress * 45 + Math.sin(time * 3 + s.offset) * 2;
-          offsetY = s.dispersionY * state4Progress * 45 - state4Progress * 30; // Float upward
+          offsetX = s.dispersionX * state4Progress * 60 + Math.sin(time * 3 + s.offset) * 2;
+          offsetY = s.dispersionY * state4Progress * 60 - state4Progress * 40; // float upward like embers
         }
       }
 
-      // Render Glyph if active
-      if (intensity > 0.06) {
-        // High-frequency subtle character shuffle
-        if (Math.random() < 0.07) {
+      // Render glyph
+      if (intensity > 0.04) {
+        if (Math.random() < 0.08) {
           s.char = Math.random() > 0.5 ? '1' : '0';
         }
 
-        const alpha = Math.min(1, intensity * (s.alpha * 1.4));
+        const alpha = Math.min(1, intensity * (0.45 + s.alpha * 0.9));
 
-        // Precision luxury palette:
-        // High luminance (arc reactor / highlights): Warm Arc Gold
-        // Mid luminance: Crisp Platinum / White
-        // Low luminance: Deep Titanium / Slate
-        if (s.luminance > 0.52) {
-          ctx.fillStyle = `rgba(223, 186, 117, ${alpha})`; // Warm Arc Gold (#dfba75)
-        } else if (s.luminance > 0.22) {
-          ctx.fillStyle = `rgba(245, 245, 247, ${alpha * 0.95})`; // Crisp White (#f5f5f7)
+        // Radiant multi-spectral palette ensuring high visibility across both light and dark regions:
+        // Highlights (face/eyes/collar): Brilliant White (#ffffff)
+        // Midtones: Warm Arc Gold (#f5b050 / #dfba75)
+        // Dark areas (suit/hair): Electric Arc Cyan (#60a5fa / #38bdf8)
+        if (s.luminance > 0.45) {
+          ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.98})`;
+        } else if (s.luminance > 0.18) {
+          ctx.fillStyle = `rgba(245, 180, 80, ${alpha * 0.94})`;
         } else {
-          ctx.fillStyle = `rgba(165, 165, 175, ${alpha * 0.72})`; // Metallic Titanium
+          ctx.fillStyle = `rgba(96, 165, 250, ${alpha * 0.90})`;
         }
 
         ctx.fillText(s.char, s.x + offsetX, s.y + offsetY);

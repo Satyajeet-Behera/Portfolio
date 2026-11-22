@@ -160,6 +160,9 @@
   min-width: 540px;
   max-width: 1280px;
   flex-shrink: 0;
+  contain: layout paint;
+  transform: translateZ(0);
+  will-change: transform;
 
   // Frosted Glass base
   background: rgba(20, 14, 11, 0.62);
@@ -415,6 +418,9 @@
   width: clamp(280px, 28vw, 420px);
   flex-shrink: 0;
   position: relative;
+  contain: layout paint;
+  transform: translateZ(0);
+  will-change: transform;
   background: rgba(20, 14, 11, 0.55);
   backdrop-filter: blur(28px) saturate(190%);
   -webkit-backdrop-filter: blur(28px) saturate(190%);
