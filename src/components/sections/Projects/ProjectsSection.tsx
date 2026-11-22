@@ -125,7 +125,7 @@ export const ProjectsSection: React.FC = () => {
                     height={484}
                     quality={90}
                     className={styles.projectImage}
-                    sizes="(max-width: 640px) 92vw, (max-width: 1024px) 80vw, 720px"
+                    sizes="(max-width: 640px) 92vw, (max-width: 1024px) 75vw, 67vw"
                     loading={idx < 2 ? 'eager' : 'lazy'}
                   />
 
