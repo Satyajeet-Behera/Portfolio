@@ -3,6 +3,7 @@
 export const siteConfig = {
   name: 'Satyajeet Behera',
   title: 'Satyajeet Behera | Personal Portfolio',
+  logo: '/images/logo.webp',
   description:
     'Explore the work, projects and experiments of Satyajeet Behera — building intelligent tools, autonomous agents and high-performance digital experiences.',
   eyebrow: '',

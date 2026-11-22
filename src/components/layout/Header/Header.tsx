@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Container } from '../Container/Container';
 import { siteConfig } from '@/lib/site-config';
@@ -154,9 +155,16 @@ export const Header: React.FC = () => {
               }
             }}
           >
-            <span className={styles.monogram} aria-hidden="true">
-              SB
-            </span>
+            <div className={styles.logoBadge} aria-hidden="true">
+              <Image
+                src="/images/logo.webp"
+                alt="Satyajeet Behera Official Logo"
+                width={42}
+                height={42}
+                className={styles.logoImage}
+                priority
+              />
+            </div>
             <span className={styles.wordmark}>
               <span className={styles.wordmarkFirst}>SATYAJEET</span>{' '}
               <span className={styles.wordmarkLast}>BEHERA</span>

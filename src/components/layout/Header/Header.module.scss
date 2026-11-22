@@ -42,17 +42,48 @@
   @include focus-visible-ring;
 
   &:hover {
-    opacity: 0.9;
+    opacity: 0.95;
 
+    .logoBadge,
     .monogram {
       border-color: $color-accent-gold;
-      box-shadow: 0 0 12px rgba(197, 160, 89, 0.25);
+      box-shadow: 0 0 16px rgba(197, 160, 89, 0.4);
+      transform: scale(1.04);
     }
 
     .wordmarkLast {
       color: $color-accent-gold-light;
     }
   }
+}
+
+.logoBadge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.625rem;
+  height: 2.625rem;
+  border-radius: 9px;
+  overflow: hidden;
+  background: #000000;
+  border: 1px solid rgba(197, 160, 89, 0.45);
+  box-shadow: 0 0 12px rgba(197, 160, 89, 0.25);
+  transition: all $transition-medium;
+  flex-shrink: 0;
+
+  @include screen-below($bp-tablet) {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+}
+
+.logoImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 7px;
+  display: block;
 }
 
 .monogram {

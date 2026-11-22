@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Container } from '../Container/Container';
 import { socialLinks } from '@/data/social-links';
 import styles from './Footer.module.scss';
@@ -23,9 +24,15 @@ export const Footer: React.FC = () => {
           {/* Brand & Identity */}
           <div className={styles.brandCol}>
             <Link href="/" className={styles.brand}>
-              <span className={styles.monogram} aria-hidden="true">
-                SB
-              </span>
+              <div className={styles.logoBadge} aria-hidden="true">
+                <Image
+                  src="/images/logo.webp"
+                  alt="Satyajeet Behera Official Logo"
+                  width={44}
+                  height={44}
+                  className={styles.logoImage}
+                />
+              </div>
               <span className={styles.wordmark}>
                 <span className={styles.wordmarkFirst}>SATYAJEET</span>{' '}
                 <span className={styles.wordmarkLast}>BEHERA</span>
