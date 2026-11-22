@@ -146,7 +146,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             </div>
             <div className={styles.authorMeta}>
               <span className={styles.authorName}>Satyajeet Behera</span>
-              <span className={styles.authorRole}>AI Enthusiast & Developer</span>
+              <span className={styles.authorRole}>Software Engineer & Developer</span>
             </div>
           </div>
         </header>
@@ -192,7 +192,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             <div className={styles.bioContent}>
               <h3 className={styles.bioName}>Written by Satyajeet Behera</h3>
               <p className={styles.bioText}>
-                AI enthusiast, full-stack developer, and speedcuber building autonomous agents, interactive digital experiences, and high-performance web systems.
+                Software engineer, full-stack developer, and speedcuber building autonomous agents, interactive digital experiences, and high-performance web systems.
               </p>
               <div className={styles.bioLinks}>
                 <a href="https://github.com/Satyajeet-Behera" target="_blank" rel="noopener noreferrer">GitHub</a>

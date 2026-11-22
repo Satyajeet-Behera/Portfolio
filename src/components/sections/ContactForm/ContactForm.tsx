@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Container } from '@/components/layout/Container/Container';
 import { SectionLabel } from '@/components/ui/SectionLabel/SectionLabel';
 import styles from './ContactForm.module.scss';
@@ -34,6 +34,18 @@ export const ContactForm: React.FC = () => {
   const [errors, setErrors] = useState<FormErrors>({});
   const [status, setStatus] = useState<SubmissionStatus>('idle');
   const [serverMessage, setServerMessage] = useState<string>('');
+
+  // Strict real-time validity check: all required fields must be filled and valid
+  const isFormValid = useMemo(() => {
+    const hasName = formData.name.trim().length >= 2;
+    const phoneRegex = /^[\d\s+\-()]{7,20}$/;
+    const hasPhone = phoneRegex.test(formData.phone.trim());
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const hasEmail = emailRegex.test(formData.email.trim());
+    const hasMessage = formData.message.trim().length >= 10;
+
+    return hasName && hasPhone && hasEmail && hasMessage;
+  }, [formData]);
 
   const validate = (): boolean => {
     const newErrors: FormErrors = {};
@@ -72,16 +84,29 @@ export const ContactForm: React.FC = () => {
     }
   };
 
+  const handleClear = () => {
+    setFormData({
+      name: '',
+      phone: '',
+      email: '',
+      message: '',
+      botCheck: '',
+    });
+    setErrors({});
+    setServerMessage('');
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Only accept submission if all fields are valid
+    if (!isFormValid || !validate()) {
+      return;
+    }
 
     // Spam honeypot trap
     if (formData.botCheck) {
       setStatus('success');
-      return;
-    }
-
-    if (!validate()) {
       return;
     }
 
@@ -140,6 +165,10 @@ export const ContactForm: React.FC = () => {
       className={styles.section}
       aria-labelledby="contact-form-heading"
     >
+      {/* Golden hour orange ambient atmosphere lighting */}
+      <div className={styles.orangeAtmosphere} aria-hidden="true" />
+      <div className={styles.orangeGlowLeft} aria-hidden="true" />
+
       <Container className={styles.container}>
         <div className={styles.grid}>
           {/* Left Column: Context & Transmission Protocol */}
@@ -185,7 +214,7 @@ export const ContactForm: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Column: Interactive Form */}
+          {/* Right Column: Interactive Frosted Glass Form */}
           <div className={styles.formCol}>
             <div className={styles.formStage}>
               <div className={styles.stageBacklight} aria-hidden="true" />
@@ -235,7 +264,7 @@ export const ContactForm: React.FC = () => {
                     />
                   </div>
 
-                  {/* Name field */}
+                  {/* Name field (No placeholder preview) */}
                   <div className={styles.fieldGroup}>
                     <label htmlFor="name" className={styles.label}>
                       Your Name <span className={styles.required}>*</span>
@@ -245,7 +274,7 @@ export const ContactForm: React.FC = () => {
                       id="name"
                       name="name"
                       required
-                      placeholder="e.g. Tony Stark"
+                      placeholder=""
                       value={formData.name}
                       onChange={handleChange}
                       className={`${styles.input} ${errors.name ? styles.inputError : ''}`}
@@ -260,7 +289,7 @@ export const ContactForm: React.FC = () => {
                     )}
                   </div>
 
-                  {/* Contact Number & Email (2-column on tablet+) */}
+                  {/* Contact Number & Email (No placeholder preview) */}
                   <div className={styles.row}>
                     <div className={styles.fieldGroup}>
                       <label htmlFor="phone" className={styles.label}>
@@ -271,7 +300,7 @@ export const ContactForm: React.FC = () => {
                         id="phone"
                         name="phone"
                         required
-                        placeholder="+91 80747 83962"
+                        placeholder=""
                         value={formData.phone}
                         onChange={handleChange}
                         className={`${styles.input} ${errors.phone ? styles.inputError : ''}`}
@@ -295,7 +324,7 @@ export const ContactForm: React.FC = () => {
                         id="email"
                         name="email"
                         required
-                        placeholder="you@domain.com"
+                        placeholder=""
                         value={formData.email}
                         onChange={handleChange}
                         className={`${styles.input} ${errors.email ? styles.inputError : ''}`}
@@ -311,7 +340,7 @@ export const ContactForm: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Message field */}
+                  {/* Message field (No placeholder preview) */}
                   <div className={styles.fieldGroup}>
                     <label htmlFor="message" className={styles.label}>
                       Message / Project Scope <span className={styles.required}>*</span>
@@ -321,7 +350,7 @@ export const ContactForm: React.FC = () => {
                       name="message"
                       rows={5}
                       required
-                      placeholder="Tell me about what you are building, the problem to solve, or what you'd like to collaborate on..."
+                      placeholder=""
                       value={formData.message}
                       onChange={handleChange}
                       className={`${styles.textarea} ${errors.message ? styles.inputError : ''}`}
@@ -344,28 +373,41 @@ export const ContactForm: React.FC = () => {
                     </div>
                   )}
 
-                  {/* Submit Button */}
-                  <button
-                    type="submit"
-                    disabled={status === 'submitting'}
-                    className={styles.submitButton}
-                  >
-                    {status === 'submitting' ? (
-                      <span className={styles.submittingInner}>
-                        <span className={styles.spinner} aria-hidden="true" />
-                        Transmitting Message...
-                      </span>
-                    ) : (
-                      <span className={styles.buttonContent}>
-                        Send Message
-                        <span className={styles.arrow} aria-hidden="true">→</span>
-                      </span>
-                    )}
-                  </button>
+                  {/* Action Bar: Left small Clear button + Right 3D glowing Orange button */}
+                  <div className={styles.actionBar}>
+                    <button
+                      type="button"
+                      onClick={handleClear}
+                      className={styles.clearButton}
+                      disabled={status === 'submitting'}
+                      title="Clear all fields in this form"
+                    >
+                      Clear Information
+                    </button>
+
+                    <button
+                      type="submit"
+                      disabled={!isFormValid || status === 'submitting'}
+                      className={`${styles.submitButton} ${isFormValid ? styles.submitButtonReady : ''}`}
+                      title={isFormValid ? 'Send message' : 'Fill in all fields with valid information to send'}
+                    >
+                      {status === 'submitting' ? (
+                        <span className={styles.submittingInner}>
+                          <span className={styles.spinner} aria-hidden="true" />
+                          Transmitting...
+                        </span>
+                      ) : (
+                        <span className={styles.buttonContent}>
+                          Send Message
+                          <span className={styles.arrow} aria-hidden="true">→</span>
+                        </span>
+                      )}
+                    </button>
+                  </div>
                 </form>
               )}
 
-              {/* Corner Accents */}
+              {/* Corner Accents in orange */}
               <div className={`${styles.corner} ${styles.cornerTL}`} aria-hidden="true" />
               <div className={`${styles.corner} ${styles.cornerTR}`} aria-hidden="true" />
               <div className={`${styles.corner} ${styles.cornerBL}`} aria-hidden="true" />

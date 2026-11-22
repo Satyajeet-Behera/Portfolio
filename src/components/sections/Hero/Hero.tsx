@@ -1,6 +1,5 @@
 import React from 'react';
 import { Container } from '@/components/layout/Container/Container';
-import { SectionLabel } from '@/components/ui/SectionLabel/SectionLabel';
 import { HeroPortrait } from './HeroPortrait';
 import { siteConfig } from '@/lib/site-config';
 import type { SectionProps } from '@/types';
@@ -17,10 +16,6 @@ export const Hero: React.FC<SectionProps> = ({ id = 'hero', className }) => {
         <div className={styles.grid}>
           {/* Left Column: Typography & Identity */}
           <div className={styles.contentCol}>
-            <div className={styles.eyebrowWrapper}>
-              <SectionLabel text={siteConfig.eyebrow} />
-            </div>
-
             <h1 className={styles.heading}>
               <span className={styles.greeting}>Hi, I&apos;m </span>
               <span className={styles.highlightName}>Satyajeet Behera</span>

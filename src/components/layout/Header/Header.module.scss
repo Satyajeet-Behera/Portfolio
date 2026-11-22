@@ -10,10 +10,10 @@
   width: 100%;
   height: $header-height;
   z-index: $z-header;
-  background: rgba(8, 8, 10, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid $color-border-subtle;
+  background: rgba(8, 8, 10, 0.8);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   transition: background-color $transition-medium;
 
   @include screen-below($bp-tablet) {
@@ -29,6 +29,7 @@
 .brandWrapper {
   display: flex;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .brand {
@@ -102,27 +103,28 @@
   align-items: center;
   max-width: 100%;
 
-  @include screen-below($bp-tablet) {
+  @include screen-below($bp-laptop) {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     &::-webkit-scrollbar {
       display: none;
     }
+    padding-bottom: 2px;
   }
 }
 
 .navList {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  gap: 1.15rem;
   list-style: none;
   margin: 0;
   padding: 0;
   white-space: nowrap;
 
-  @include screen-below($bp-tablet) {
-    gap: 0.5rem;
+  @include screen-below($bp-laptop) {
+    gap: 0.4rem;
   }
 }
 
@@ -134,14 +136,15 @@
   position: relative;
   display: inline-flex;
   align-items: center;
-  padding: 0.5rem 0.75rem;
+  padding: 0.5rem 0.65rem;
   font-family: $font-sans;
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   font-weight: 500;
   color: $color-text-secondary;
   letter-spacing: 0.01em;
   transition: color $transition-fast;
   text-decoration: none;
+  cursor: pointer;
 
   @include focus-visible-ring;
 
@@ -150,17 +153,40 @@
   }
 
   &.active {
-    color: $color-text-primary;
+    color: #ffffff;
+    font-weight: 600;
+  }
+
+  @include screen-below($bp-laptop) {
+    padding: 0.4rem 0.5rem;
+    font-size: 0.8rem;
   }
 }
 
 .activeIndicator {
   position: absolute;
   bottom: -2px;
-  left: 0.75rem;
-  right: 0.75rem;
+  left: 0.65rem;
+  right: 0.65rem;
   height: 2px;
   background: linear-gradient(90deg, $color-accent-gold, $color-accent-gold-light);
   border-radius: 9999px;
-  box-shadow: 0 0 8px rgba(197, 160, 89, 0.5);
+  box-shadow: 0 0 10px rgba(197, 160, 89, 0.6);
+  animation: indicatorSlideIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+
+  @include screen-below($bp-laptop) {
+    left: 0.5rem;
+    right: 0.5rem;
+  }
+}
+
+@keyframes indicatorSlideIn {
+  from {
+    opacity: 0;
+    transform: scaleX(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
 }
