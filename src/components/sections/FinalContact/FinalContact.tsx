@@ -92,7 +92,7 @@ export const FinalContact: React.FC = () => {
             <div className={`${styles.corner} ${styles.cornerBR}`} aria-hidden="true" />
           </div>
 
-          {/* Instagram Card: Purple and Blue */}
+          {/* Instagram Card: Official Brand Sunset Gradient */}
           <div className={`${styles.card} ${styles.cardInstagram}`}>
             <div className={styles.cardHeader}>
               <div className={styles.iconCircle} aria-hidden="true">
@@ -100,7 +100,7 @@ export const FinalContact: React.FC = () => {
                   className={styles.svgIcon}
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="currentColor"
+                  stroke="#ffffff"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -147,7 +147,7 @@ export const FinalContact: React.FC = () => {
             <div className={`${styles.corner} ${styles.cornerBR}`} aria-hidden="true" />
           </div>
 
-          {/* WhatsApp Card: Green and White */}
+          {/* WhatsApp Card: Official Brand Green */}
           <div className={`${styles.card} ${styles.cardWhatsapp}`}>
             <div className={styles.cardHeader}>
               <div className={styles.iconCircle} aria-hidden="true">
@@ -155,7 +155,7 @@ export const FinalContact: React.FC = () => {
                   className={styles.svgIcon}
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="currentColor"
+                  stroke="#ffffff"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -200,21 +200,20 @@ export const FinalContact: React.FC = () => {
             <div className={`${styles.corner} ${styles.cornerBR}`} aria-hidden="true" />
           </div>
 
-          {/* Email Card: Red and White */}
+          {/* Email Card: Official Google Gmail Brand Logo & Colors */}
           <div className={`${styles.card} ${styles.cardEmail}`}>
             <div className={styles.cardHeader}>
               <div className={styles.iconCircle} aria-hidden="true">
                 <svg
-                  className={styles.svgIcon}
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+                  className={styles.svgIconGmail}
+                  viewBox="0 0 512 384"
+                  aria-hidden="true"
                 >
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                  <polyline points="22,6 12,13 2,6" />
+                  <path fill="#4285F4" d="M512 85v214c0 16-14 30-30 30h-30V170L256 226 62 170v159H32c-16 0-32-14-32-30V85c0-22 26-33 41-18l215 150L471 67c15-15 41-4 41 18z"/>
+                  <path fill="#EA4335" d="M452 67L256 217 60 67C46 56 32 67 32 85v4l224 156L480 89v-4c0-18-14-29-28-18z"/>
+                  <path fill="#34A853" d="M32 89v210c0 16 14 30 30 30h30V170L32 89z"/>
+                  <path fill="#FBBC05" d="M450 299c16 0 30-14 30-30V89l-60 81v129h30z"/>
+                  <path fill="#C5221F" d="M420 170v159h30c16 0 30-14 30-30V170H420z"/>
                 </svg>
               </div>
               <div className={styles.channelMeta}>

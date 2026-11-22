@@ -123,6 +123,11 @@
   height: 24px;
 }
 
+.svgIconGmail {
+  width: 26px;
+  height: 26px;
+}
+
 .channelMeta {
   display: flex;
   flex-direction: column;
@@ -310,12 +315,12 @@
 }
 
 // ==========================================
-// 2. INSTAGRAM CARD: Purple and Blue
+// 2. INSTAGRAM CARD: Official Brand Sunset Gradient
 // ==========================================
 .cardInstagram {
-  background: linear-gradient(165deg, rgba(23, 13, 43, 0.9) 0%, rgba(12, 17, 41, 0.9) 100%);
-  border: 1px solid rgba(131, 58, 180, 0.45);
-  box-shadow: 0 12px 30px rgba(88, 81, 219, 0.25);
+  background: linear-gradient(165deg, rgba(20, 11, 28, 0.92) 0%, rgba(12, 10, 22, 0.92) 100%);
+  border: 1px solid rgba(220, 39, 67, 0.4);
+  box-shadow: 0 12px 30px rgba(188, 24, 136, 0.22);
 
   &::before {
     content: '';
@@ -324,20 +329,28 @@
     right: 0;
     width: 100%;
     height: 70%;
-    background: radial-gradient(circle at 85% 15%, rgba(131, 58, 180, 0.35) 0%, rgba(64, 93, 230, 0.22) 55%, transparent 80%);
+    // Iconic Instagram multi-color ambient lighting
+    background: radial-gradient(
+      circle at 85% 15%,
+      rgba(225, 48, 108, 0.35) 0%,
+      rgba(240, 148, 51, 0.2) 40%,
+      rgba(188, 24, 136, 0.22) 75%,
+      transparent 100%
+    );
     pointer-events: none;
     border-radius: 14px;
   }
 
   .iconCircle {
-    background: linear-gradient(135deg, #833ab4 0%, #5851db 50%, #405de6 100%);
-    border: 1.5px solid rgba(255, 255, 255, 0.35);
+    // Official Instagram 5-stop sunset gradient
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    border: 1.5px solid rgba(255, 255, 255, 0.45);
     color: #ffffff;
-    box-shadow: 0 0 15px rgba(131, 58, 180, 0.4);
+    box-shadow: 0 4px 16px rgba(220, 39, 67, 0.45), 0 0 12px rgba(188, 24, 136, 0.3);
   }
 
   .protocolTag {
-    color: #c084fc;
+    color: #e1306c;
   }
 
   .channelName {
@@ -349,58 +362,59 @@
   }
 
   .valueRow {
-    background: rgba(88, 81, 219, 0.18);
-    border: 1px solid rgba(131, 58, 180, 0.35);
+    background: rgba(225, 48, 108, 0.12);
+    border: 1px solid rgba(225, 48, 108, 0.3);
   }
 
   .displayValue {
-    color: #f5f3ff;
+    color: #fff1f2;
   }
 
   .copyBtn {
-    background: rgba(131, 58, 180, 0.25);
-    color: #e9d5ff;
-    border: 1px solid rgba(192, 132, 252, 0.5);
+    background: rgba(225, 48, 108, 0.2);
+    color: #fecdd3;
+    border: 1px solid rgba(225, 48, 108, 0.5);
     font-weight: 600;
 
     &:hover {
-      background: #833ab4;
+      background: linear-gradient(45deg, #f09433, #dc2743);
       color: #ffffff;
-      border-color: #833ab4;
+      border-color: #f09433;
     }
   }
 
   .actionLink {
-    background: linear-gradient(135deg, #833ab4 0%, #5851db 50%, #405de6 100%);
+    // Official Instagram sunset gradient action button
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
     color: #ffffff;
     font-weight: 600;
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    box-shadow: 0 4px 18px rgba(88, 81, 219, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    box-shadow: 0 4px 18px rgba(220, 39, 67, 0.45), 0 0 12px rgba(188, 24, 136, 0.3);
 
     &:hover {
-      box-shadow: 0 8px 25px rgba(131, 58, 180, 0.65);
+      box-shadow: 0 8px 28px rgba(220, 39, 67, 0.7), 0 0 20px rgba(240, 148, 51, 0.5);
       transform: translateY(-2px);
     }
   }
 
   .corner {
-    border-color: #833ab4;
+    border-color: #dc2743;
   }
 
   &:hover {
     transform: translateY(-5px);
-    border-color: #a855f7;
-    box-shadow: 0 20px 42px rgba(88, 81, 219, 0.38), 0 0 25px rgba(131, 58, 180, 0.35);
+    border-color: #e1306c;
+    box-shadow: 0 20px 42px rgba(225, 48, 108, 0.35), 0 0 25px rgba(240, 148, 51, 0.25);
 
     .iconCircle {
       transform: scale(1.06);
-      box-shadow: 0 0 22px rgba(131, 58, 180, 0.7);
+      box-shadow: 0 0 22px rgba(225, 48, 108, 0.7), 0 0 30px rgba(240, 148, 51, 0.4);
     }
   }
 }
 
 // ==========================================
-// 3. WHATSAPP CARD: Green and White
+// 3. WHATSAPP CARD: Official Brand Green
 // ==========================================
 .cardWhatsapp {
   background: linear-gradient(165deg, rgba(7, 31, 22, 0.9) 0%, rgba(5, 22, 16, 0.9) 100%);
@@ -423,7 +437,7 @@
     background: #25d366;
     border: 1.5px solid #86efac;
     color: #ffffff;
-    box-shadow: 0 0 15px rgba(37, 211, 102, 0.4);
+    box-shadow: 0 4px 16px rgba(37, 211, 102, 0.4);
   }
 
   .protocolTag {
@@ -490,12 +504,12 @@
 }
 
 // ==========================================
-// 4. EMAIL CARD: Red and White
+// 4. EMAIL CARD: Official Google Gmail Brand Logo & Colors
 // ==========================================
 .cardEmail {
-  background: linear-gradient(165deg, rgba(34, 12, 12, 0.9) 0%, rgba(23, 8, 8, 0.9) 100%);
-  border: 1px solid rgba(234, 67, 53, 0.4);
-  box-shadow: 0 12px 30px rgba(234, 67, 53, 0.2);
+  background: linear-gradient(165deg, rgba(16, 18, 26, 0.92) 0%, rgba(10, 12, 18, 0.92) 100%);
+  border: 1px solid rgba(234, 67, 53, 0.38);
+  box-shadow: 0 12px 30px rgba(234, 67, 53, 0.18);
 
   &::before {
     content: '';
@@ -504,20 +518,25 @@
     right: 0;
     width: 100%;
     height: 70%;
-    background: radial-gradient(circle at 85% 15%, rgba(234, 67, 53, 0.3) 0%, rgba(220, 38, 38, 0.15) 55%, transparent 80%);
+    background: radial-gradient(
+      circle at 85% 15%,
+      rgba(234, 67, 53, 0.28) 0%,
+      rgba(66, 133, 244, 0.14) 45%,
+      transparent 80%
+    );
     pointer-events: none;
     border-radius: 14px;
   }
 
   .iconCircle {
-    background: #ea4335;
-    border: 1.5px solid #fca5a5;
-    color: #ffffff;
-    box-shadow: 0 0 15px rgba(234, 67, 53, 0.4);
+    // Official white Gmail badge holding the 4-color Google M
+    background: #ffffff;
+    border: 1.5px solid rgba(255, 255, 255, 0.85);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25), 0 0 14px rgba(234, 67, 53, 0.25);
   }
 
   .protocolTag {
-    color: #f87171;
+    color: #ea4335;
   }
 
   .channelName {
@@ -529,8 +548,8 @@
   }
 
   .valueRow {
-    background: rgba(234, 67, 53, 0.16);
-    border: 1px solid rgba(234, 67, 53, 0.35);
+    background: rgba(234, 67, 53, 0.12);
+    border: 1px solid rgba(234, 67, 53, 0.3);
   }
 
   .displayValue {
@@ -538,9 +557,9 @@
   }
 
   .copyBtn {
-    background: rgba(234, 67, 53, 0.22);
+    background: rgba(234, 67, 53, 0.2);
     color: #fca5a5;
-    border: 1px solid rgba(248, 113, 113, 0.5);
+    border: 1px solid rgba(234, 67, 53, 0.5);
     font-weight: 600;
 
     &:hover {
@@ -551,14 +570,15 @@
   }
 
   .actionLink {
-    background: linear-gradient(135deg, #ea4335 0%, #dc2626 100%);
+    // Official Google Gmail Red action button
+    background: linear-gradient(135deg, #EA4335 0%, #D93025 100%);
     color: #ffffff;
     font-weight: 600;
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    box-shadow: 0 4px 18px rgba(234, 67, 53, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 18px rgba(234, 67, 53, 0.45);
 
     &:hover {
-      box-shadow: 0 8px 25px rgba(234, 67, 53, 0.65);
+      box-shadow: 0 8px 25px rgba(234, 67, 53, 0.7);
       transform: translateY(-2px);
     }
   }
@@ -569,12 +589,12 @@
 
   &:hover {
     transform: translateY(-5px);
-    border-color: #ef4444;
-    box-shadow: 0 20px 42px rgba(234, 67, 53, 0.32), 0 0 25px rgba(234, 67, 53, 0.3);
+    border-color: #ea4335;
+    box-shadow: 0 20px 42px rgba(234, 67, 53, 0.32), 0 0 25px rgba(234, 67, 53, 0.25);
 
     .iconCircle {
       transform: scale(1.06);
-      box-shadow: 0 0 22px rgba(234, 67, 53, 0.7);
+      box-shadow: 0 0 22px rgba(234, 67, 53, 0.6);
     }
   }
 }
