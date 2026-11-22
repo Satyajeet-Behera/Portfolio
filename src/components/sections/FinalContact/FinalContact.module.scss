@@ -2,15 +2,17 @@
 
 .section {
   position: relative;
-  // Luxurious, smooth milky white background
-  background-color: #fbfbfe;
+  // Deep, elegant navy blue background
+  background-color: #08162d;
   background:
-    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255, 255, 255, 1) 0%, rgba(246, 248, 252, 0.8) 50%, rgba(240, 243, 249, 0.95) 100%),
-    linear-gradient(180deg, #ffffff 0%, #fbfbfe 45%, #f3f5fa 100%);
-  color: #0f172a;
+    radial-gradient(ellipse 85% 55% at 50% 0%, rgba(29, 78, 216, 0.18) 0%, rgba(13, 31, 61, 0.5) 45%, transparent 75%),
+    radial-gradient(circle at 85% 20%, rgba(14, 165, 233, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 15% 80%, rgba(30, 58, 138, 0.15) 0%, transparent 55%),
+    linear-gradient(180deg, #0b1c3a 0%, #08162d 50%, #061327 100%);
+  color: #ffffff;
   padding: 6.5rem 0 7.5rem;
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   overflow: hidden;
 
   @media (max-width: 768px) {
@@ -39,11 +41,11 @@
 }
 
 .sectionLabelCustom {
-  background-color: rgba(15, 23, 42, 0.06) !important;
-  border-color: rgba(15, 23, 42, 0.15) !important;
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
 
   span {
-    color: #1e293b !important;
+    color: #ffffff !important;
   }
 }
 
@@ -52,18 +54,18 @@
   font-weight: 700;
   line-height: 1.15;
   letter-spacing: -0.02em;
-  color: #0f172a;
+  color: #ffffff;
   margin-bottom: 1.25rem;
 }
 
 .period {
-  color: #2563eb;
+  color: #60a5fa;
 }
 
 .description {
   font-size: clamp(1rem, 1.2vw, 1.125rem);
   line-height: 1.7;
-  color: #475569;
+  color: #cbd5e1;
   margin: 0;
 }
 
@@ -92,6 +94,8 @@
   padding: 2rem 1.5rem 1.75rem;
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease;
   overflow: hidden;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .cardHeader {
@@ -230,9 +234,9 @@
 // 1. GITHUB CARD: Black and White
 // ==========================================
 .cardGithub {
-  background: #090a0f;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18), 0 2px 6px rgba(0, 0, 0, 0.08);
+  background: rgba(9, 10, 15, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3), 0 2px 6px rgba(0, 0, 0, 0.15);
 
   .iconCircle {
     background: #000000;
@@ -254,7 +258,7 @@
 
   .valueRow {
     background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.18);
   }
 
   .displayValue {
@@ -295,7 +299,7 @@
   &:hover {
     transform: translateY(-5px);
     border-color: #ffffff;
-    box-shadow: 0 20px 42px rgba(0, 0, 0, 0.35), 0 0 25px rgba(255, 255, 255, 0.15);
+    box-shadow: 0 20px 42px rgba(0, 0, 0, 0.45), 0 0 25px rgba(255, 255, 255, 0.2);
 
     .iconCircle {
       background: #ffffff;
@@ -309,9 +313,9 @@
 // 2. INSTAGRAM CARD: Purple and Blue
 // ==========================================
 .cardInstagram {
-  background: linear-gradient(165deg, #170d2b 0%, #0c1129 100%);
-  border: 1px solid rgba(131, 58, 180, 0.35);
-  box-shadow: 0 12px 30px rgba(88, 81, 219, 0.16);
+  background: linear-gradient(165deg, rgba(23, 13, 43, 0.9) 0%, rgba(12, 17, 41, 0.9) 100%);
+  border: 1px solid rgba(131, 58, 180, 0.45);
+  box-shadow: 0 12px 30px rgba(88, 81, 219, 0.25);
 
   &::before {
     content: '';
@@ -320,7 +324,7 @@
     right: 0;
     width: 100%;
     height: 70%;
-    background: radial-gradient(circle at 85% 15%, rgba(131, 58, 180, 0.32) 0%, rgba(64, 93, 230, 0.18) 55%, transparent 80%);
+    background: radial-gradient(circle at 85% 15%, rgba(131, 58, 180, 0.35) 0%, rgba(64, 93, 230, 0.22) 55%, transparent 80%);
     pointer-events: none;
     border-radius: 14px;
   }
@@ -345,8 +349,8 @@
   }
 
   .valueRow {
-    background: rgba(88, 81, 219, 0.15);
-    border: 1px solid rgba(131, 58, 180, 0.3);
+    background: rgba(88, 81, 219, 0.18);
+    border: 1px solid rgba(131, 58, 180, 0.35);
   }
 
   .displayValue {
@@ -386,7 +390,7 @@
   &:hover {
     transform: translateY(-5px);
     border-color: #a855f7;
-    box-shadow: 0 20px 42px rgba(88, 81, 219, 0.3), 0 0 25px rgba(131, 58, 180, 0.3);
+    box-shadow: 0 20px 42px rgba(88, 81, 219, 0.38), 0 0 25px rgba(131, 58, 180, 0.35);
 
     .iconCircle {
       transform: scale(1.06);
@@ -399,9 +403,9 @@
 // 3. WHATSAPP CARD: Green and White
 // ==========================================
 .cardWhatsapp {
-  background: linear-gradient(165deg, #071f16 0%, #051610 100%);
-  border: 1px solid rgba(37, 211, 102, 0.32);
-  box-shadow: 0 12px 30px rgba(37, 211, 102, 0.14);
+  background: linear-gradient(165deg, rgba(7, 31, 22, 0.9) 0%, rgba(5, 22, 16, 0.9) 100%);
+  border: 1px solid rgba(37, 211, 102, 0.38);
+  box-shadow: 0 12px 30px rgba(37, 211, 102, 0.2);
 
   &::before {
     content: '';
@@ -410,7 +414,7 @@
     right: 0;
     width: 100%;
     height: 70%;
-    background: radial-gradient(circle at 85% 15%, rgba(37, 211, 102, 0.25) 0%, rgba(16, 185, 129, 0.12) 55%, transparent 80%);
+    background: radial-gradient(circle at 85% 15%, rgba(37, 211, 102, 0.28) 0%, rgba(16, 185, 129, 0.15) 55%, transparent 80%);
     pointer-events: none;
     border-radius: 14px;
   }
@@ -435,8 +439,8 @@
   }
 
   .valueRow {
-    background: rgba(37, 211, 102, 0.12);
-    border: 1px solid rgba(37, 211, 102, 0.28);
+    background: rgba(37, 211, 102, 0.15);
+    border: 1px solid rgba(37, 211, 102, 0.32);
   }
 
   .displayValue {
@@ -476,7 +480,7 @@
   &:hover {
     transform: translateY(-5px);
     border-color: #25d366;
-    box-shadow: 0 20px 42px rgba(37, 211, 102, 0.25), 0 0 25px rgba(37, 211, 102, 0.25);
+    box-shadow: 0 20px 42px rgba(37, 211, 102, 0.32), 0 0 25px rgba(37, 211, 102, 0.3);
 
     .iconCircle {
       transform: scale(1.06);
@@ -489,9 +493,9 @@
 // 4. EMAIL CARD: Red and White
 // ==========================================
 .cardEmail {
-  background: linear-gradient(165deg, #220c0c 0%, #170808 100%);
-  border: 1px solid rgba(234, 67, 53, 0.35);
-  box-shadow: 0 12px 30px rgba(234, 67, 53, 0.15);
+  background: linear-gradient(165deg, rgba(34, 12, 12, 0.9) 0%, rgba(23, 8, 8, 0.9) 100%);
+  border: 1px solid rgba(234, 67, 53, 0.4);
+  box-shadow: 0 12px 30px rgba(234, 67, 53, 0.2);
 
   &::before {
     content: '';
@@ -500,7 +504,7 @@
     right: 0;
     width: 100%;
     height: 70%;
-    background: radial-gradient(circle at 85% 15%, rgba(234, 67, 53, 0.28) 0%, rgba(220, 38, 38, 0.12) 55%, transparent 80%);
+    background: radial-gradient(circle at 85% 15%, rgba(234, 67, 53, 0.3) 0%, rgba(220, 38, 38, 0.15) 55%, transparent 80%);
     pointer-events: none;
     border-radius: 14px;
   }
@@ -525,8 +529,8 @@
   }
 
   .valueRow {
-    background: rgba(234, 67, 53, 0.14);
-    border: 1px solid rgba(234, 67, 53, 0.3);
+    background: rgba(234, 67, 53, 0.16);
+    border: 1px solid rgba(234, 67, 53, 0.35);
   }
 
   .displayValue {
@@ -566,7 +570,7 @@
   &:hover {
     transform: translateY(-5px);
     border-color: #ef4444;
-    box-shadow: 0 20px 42px rgba(234, 67, 53, 0.25), 0 0 25px rgba(234, 67, 53, 0.25);
+    box-shadow: 0 20px 42px rgba(234, 67, 53, 0.32), 0 0 25px rgba(234, 67, 53, 0.3);
 
     .iconCircle {
       transform: scale(1.06);
