@@ -35,10 +35,39 @@ export const ProjectsSection: React.FC = () => {
 
       // Calculate total horizontal scroll distance dynamically from content width
       const getScrollDistance = () => {
-        return track.scrollWidth - window.innerWidth + 140;
+        return track.scrollWidth - window.innerWidth + 120;
       };
 
-      // Buttery smooth GSAP Timeline with gentle lead-in and lead-out
+      // Active center card prominence updater
+      const updateCardProminence = () => {
+        if (!track) return;
+        const cards = track.querySelectorAll<HTMLElement>('.' + styles.projectCard);
+        const viewportCenter = window.innerWidth / 2;
+
+        cards.forEach((card) => {
+          const rect = card.getBoundingClientRect();
+          const cardCenter = rect.left + rect.width / 2;
+          const distFromCenter = Math.abs(cardCenter - viewportCenter);
+          const maxInfluence = rect.width * 0.92;
+
+          // 1.0 at exact center, smoothly easing to 0.0 outside center zone
+          const prominence = Math.max(0, Math.min(1, 1 - distFromCenter / maxInfluence));
+          const easeProminence = prominence * prominence; // Smooth quadratic ease
+
+          const scale = 0.94 + easeProminence * 0.06; // 0.94 -> 1.00
+          const opacity = 0.72 + easeProminence * 0.28; // 0.72 -> 1.00
+          const zIndex = Math.round(easeProminence * 10) + 1;
+
+          gsap.set(card, {
+            scale,
+            opacity,
+            zIndex,
+            force3D: true,
+          });
+        });
+      };
+
+      // Buttery smooth GSAP Timeline with active card scaling
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
@@ -46,9 +75,10 @@ export const ProjectsSection: React.FC = () => {
           end: () => `+=${Math.round(getScrollDistance() * 1.15)}`,
           pin: true,
           pinSpacing: true,
-          scrub: 0.6, // Buttery smooth, responsive physics
+          scrub: 0.5, // Buttery smooth, responsive physics
           invalidateOnRefresh: true,
           anticipatePin: 1,
+          onUpdate: updateCardProminence,
         },
       });
 
@@ -65,14 +95,12 @@ export const ProjectsSection: React.FC = () => {
 
       // Brief lead-out on future lab continuation card
       tl.to({}, { duration: 0.08 });
+
+      // Run initial layout calculation
+      updateCardProminence();
     }, sectionRef);
 
-    // Refresh ScrollTrigger when images decode and layout stabilizes
-    ScrollTrigger.refresh();
-    const timer = setTimeout(() => ScrollTrigger.refresh(), 300);
-
     return () => {
-      clearTimeout(timer);
       ctx.revert();
     };
   }, []);
@@ -108,12 +136,11 @@ export const ProjectsSection: React.FC = () => {
 
         {/* Horizontal Project Showcase Track */}
         <div className={styles.trackContainer}>
-          <div ref={trackRef} className={styles.track} role="list" aria-label="Project showcase">
+          <div ref={trackRef} className={styles.track} aria-label="Project showcase">
             {projectsData.map((project, idx) => (
               <article
                 key={project.id}
                 className={styles.projectCard}
-                role="listitem"
                 aria-labelledby={`project-title-${project.id}`}
               >
                 {/* Project Image Frame with Glass Divider */}
@@ -126,7 +153,7 @@ export const ProjectsSection: React.FC = () => {
                     quality={90}
                     className={styles.projectImage}
                     sizes="(max-width: 640px) 92vw, (max-width: 1024px) 75vw, 67vw"
-                    loading={idx < 2 ? 'eager' : 'lazy'}
+                    loading="lazy"
                   />
 
                   {/* Precision Frosted HUD Overlays */}
@@ -165,7 +192,7 @@ export const ProjectsSection: React.FC = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                         className={styles.primaryLink}
-                        aria-label={`Visit live deployment of ${project.title} (opens in new tab)`}
+                        aria-label={`View site for ${project.title} (opens in new tab)`}
                       >
                         <span>View Site</span>
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2.5" aria-hidden="true">
@@ -180,7 +207,7 @@ export const ProjectsSection: React.FC = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                         className={styles.secondaryLink}
-                        aria-label={`View source code of ${project.title} on GitHub (opens in new tab)`}
+                        aria-label={`Source code: ${project.title} on GitHub (opens in new tab)`}
                       >
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="#ffffff" aria-hidden="true">
                           <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />

@@ -13,16 +13,19 @@ export const Header: React.FC = () => {
   const isBlog = pathname?.startsWith('/blog');
 
   // Exact section IDs matching page layout in order
-  const sectionIds = [
-    'hero',
-    'intelligence',
-    'magix',
-    'cuber',
-    'story',
-    'interests',
-    'projects',
-    'contact',
-  ];
+  const sectionIds = React.useMemo(
+    () => [
+      'hero',
+      'intelligence',
+      'magix',
+      'cuber',
+      'story',
+      'interests',
+      'projects',
+      'contact',
+    ],
+    []
+  );
 
   const [activeId, setActiveId] = useState<string>(isBlog ? 'blog' : 'hero');
   const isClickScrollingRef = useRef(false);
@@ -42,38 +45,47 @@ export const Header: React.FC = () => {
       }
     }
 
-    // High-performance scroll spy
+    // High-performance scroll spy with RAF throttling
+    let ticking = false;
     const handleScroll = () => {
       if (isClickScrollingRef.current) return;
 
-      // Near top of document
-      if (window.scrollY < 120) {
-        setActiveId('hero');
-        return;
-      }
-
-      // Check if near bottom of document (footer / contact area)
-      if (
-        window.innerHeight + window.scrollY >=
-        document.documentElement.scrollHeight - 100
-      ) {
-        setActiveId('contact');
-        return;
-      }
-
-      // Check sections from bottom to top so that current visible section wins
-      const headerThreshold = 200;
-      for (let i = sectionIds.length - 1; i >= 0; i--) {
-        const id = sectionIds[i];
-        const el = document.getElementById(id);
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          // Active when section top is at or above header threshold and bottom is still visible
-          if (rect.top <= headerThreshold && rect.bottom > 80) {
-            setActiveId(id);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          // Near top of document
+          if (window.scrollY < 120) {
+            setActiveId('hero');
+            ticking = false;
             return;
           }
-        }
+
+          // Check if near bottom of document (footer / contact area)
+          if (
+            window.innerHeight + window.scrollY >=
+            document.documentElement.scrollHeight - 100
+          ) {
+            setActiveId('contact');
+            ticking = false;
+            return;
+          }
+
+          // Check sections from bottom to top so that current visible section wins
+          const headerThreshold = 200;
+          for (let i = sectionIds.length - 1; i >= 0; i--) {
+            const id = sectionIds[i];
+            const el = document.getElementById(id);
+            if (el) {
+              const rect = el.getBoundingClientRect();
+              // Active when section top is at or above header threshold and bottom is still visible
+              if (rect.top <= headerThreshold && rect.bottom > 80) {
+                setActiveId(id);
+                break;
+              }
+            }
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
@@ -86,7 +98,7 @@ export const Header: React.FC = () => {
         clearTimeout(clickTimeoutRef.current);
       }
     };
-  }, [isBlog]);
+  }, [isBlog, sectionIds]);
 
   const handleNavClick = (
     e: React.MouseEvent<HTMLAnchorElement>,

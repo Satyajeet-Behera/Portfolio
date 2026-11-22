@@ -5,6 +5,8 @@
  * to ensure 60fps rendering without continuous getImageData calls.
  */
 
+import { computeCoverCrop } from './rendering-utils';
+
 export interface ImageSample {
   x: number;
   y: number;
@@ -15,6 +17,8 @@ export interface ImageSample {
   luminance: number;
   char: '0' | '1';
   offset: number;
+  dispersionX: number;
+  dispersionY: number;
 }
 
 export interface SampledGrid {
@@ -50,8 +54,15 @@ export function sampleImageToGrid(
     };
   }
 
-  // Draw image scaled to target dimensions
-  ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+  // Draw image using focal-aware cover crop so sample coordinates match rendered composition exactly
+  const crop = computeCoverCrop(
+    img.naturalWidth || img.width,
+    img.naturalHeight || img.height,
+    targetWidth,
+    targetHeight,
+    0.25
+  );
+  ctx.drawImage(img, crop.sx, crop.sy, crop.sWidth, crop.sHeight, 0, 0, targetWidth, targetHeight);
   const imgData = ctx.getImageData(0, 0, targetWidth, targetHeight).data;
 
   const samples: ImageSample[] = [];
@@ -70,9 +81,13 @@ export function sampleImageToGrid(
       const a = (imgData[idx + 3] || 0) / 255;
 
       // Only store samples that contain actual subject pixels
-      if (a > 0.02) {
+      if (a > 0.03) {
         // Rec. 709 relative luminance
         const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+        // Directional dispersion vector originating from figure center
+        const angle = Math.atan2(py - targetHeight * 0.45, px - targetWidth * 0.5) + (Math.random() - 0.5) * 0.5;
+        const speed = 0.5 + Math.random() * 1.5;
+
         samples.push({
           x: px,
           y: py,
@@ -83,6 +98,8 @@ export function sampleImageToGrid(
           luminance,
           char: Math.random() > 0.5 ? '1' : '0',
           offset: Math.random() * Math.PI * 2,
+          dispersionX: Math.cos(angle) * speed,
+          dispersionY: Math.sin(angle) * speed,
         });
       }
     }

@@ -1,13 +1,35 @@
+import dynamic from 'next/dynamic';
 import { Hero } from '@/components/sections/Hero/Hero';
-import { TonyStarkSection } from '@/components/sections/TonyStark/TonyStarkSection';
-import { MagixSection } from '@/components/sections/Magix/MagixSection';
-import { CuberSection } from '@/components/sections/Cuber/CuberSection';
-import { StorySection } from '@/components/sections/Story/StorySection';
-import { InterestsSection } from '@/components/sections/Interests/InterestsSection';
-import { ProjectsSection } from '@/components/sections/Projects/ProjectsSection';
-import { ContactForm } from '@/components/sections/ContactForm/ContactForm';
-import { GoalsSection } from '@/components/sections/Goals/GoalsSection';
-import { FinalContact } from '@/components/sections/FinalContact/FinalContact';
+
+// Dynamically split below-the-fold heavy interactive sections to minimize initial JS execution
+// SSR is enabled by default to preserve 100% SEO, accessibility trees, and server-rendered HTML
+const TonyStarkSection = dynamic(
+  () => import('@/components/sections/TonyStark/TonyStarkSection').then((mod) => mod.TonyStarkSection)
+);
+const MagixSection = dynamic(
+  () => import('@/components/sections/Magix/MagixSection').then((mod) => mod.MagixSection)
+);
+const CuberSection = dynamic(
+  () => import('@/components/sections/Cuber/CuberSection').then((mod) => mod.CuberSection)
+);
+const StorySection = dynamic(
+  () => import('@/components/sections/Story/StorySection').then((mod) => mod.StorySection)
+);
+const InterestsSection = dynamic(
+  () => import('@/components/sections/Interests/InterestsSection').then((mod) => mod.InterestsSection)
+);
+const ProjectsSection = dynamic(
+  () => import('@/components/sections/Projects/ProjectsSection').then((mod) => mod.ProjectsSection)
+);
+const ContactForm = dynamic(
+  () => import('@/components/sections/ContactForm/ContactForm').then((mod) => mod.ContactForm)
+);
+const GoalsSection = dynamic(
+  () => import('@/components/sections/Goals/GoalsSection').then((mod) => mod.GoalsSection)
+);
+const FinalContact = dynamic(
+  () => import('@/components/sections/FinalContact/FinalContact').then((mod) => mod.FinalContact)
+);
 
 export default function HomePage() {
   return (

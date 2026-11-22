@@ -24,6 +24,7 @@ export const BinaryMaskRenderer: React.FC<BinaryMaskRendererProps> = ({
   const bottomImgRef = useRef<HTMLImageElement | null>(null);
   const sampledGridRef = useRef<SampledGrid | null>(null);
   const offscreenCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const offscreenCanvasRef2 = useRef<HTMLCanvasElement | null>(null);
 
   // Interaction State
   const [isReady, setIsReady] = useState(false);
@@ -34,11 +35,18 @@ export const BinaryMaskRenderer: React.FC<BinaryMaskRendererProps> = ({
   const animationFrameId = useRef<number | null>(null);
   const startTime = useRef(Date.now());
   const scrollProgressRef = useRef(scrollProgress);
+  const isVisibleRef = useRef(false);
 
-  // 1. High-Performance Render Loop
+  // 1. High-Performance Render Loop with Visibility Caching
   const renderFrame = useCallback(() => {
     const canvas = canvasRef.current;
-    if (!canvas || !topImgRef.current || !bottomImgRef.current || !sampledGridRef.current) {
+    if (
+      !canvas ||
+      !topImgRef.current ||
+      !bottomImgRef.current ||
+      !sampledGridRef.current ||
+      !isVisibleRef.current
+    ) {
       animationFrameId.current = null;
       return;
     }
@@ -53,17 +61,23 @@ export const BinaryMaskRenderer: React.FC<BinaryMaskRendererProps> = ({
     pointerPos.current.x += (targetPointerPos.current.x - pointerPos.current.x) * 0.22;
     pointerPos.current.y += (targetPointerPos.current.y - pointerPos.current.y) * 0.22;
 
-    // Smoothly interpolate active intensity for entry/exit
+    // Smoothly interpolate active intensity for entry/reconstruction
     const targetIntensity = isPointerActive.current ? 1 : 0;
-    activeIntensity.current += (targetIntensity - activeIntensity.current) * 0.12;
+    activeIntensity.current += (targetIntensity - activeIntensity.current) * 0.14;
+    if (!isPointerActive.current && activeIntensity.current < 0.005) {
+      activeIntensity.current = 0;
+    }
 
     const time = (Date.now() - startTime.current) * 0.001;
     const currentRadius = starkConfig.engine.maskRadius * activeIntensity.current;
     const currentScroll = scrollProgressRef.current;
 
-    // Reusable offscreen canvas buffer
+    // Allocate persistent offscreen buffers once
     if (!offscreenCanvasRef.current) {
       offscreenCanvasRef.current = document.createElement('canvas');
+    }
+    if (!offscreenCanvasRef2.current) {
+      offscreenCanvasRef2.current = document.createElement('canvas');
     }
 
     drawBinaryTransformation(
@@ -74,7 +88,7 @@ export const BinaryMaskRenderer: React.FC<BinaryMaskRendererProps> = ({
       {
         cursorX: pointerPos.current.x,
         cursorY: pointerPos.current.y,
-        cursorActive: activeIntensity.current > 0.01,
+        cursorActive: activeIntensity.current > 0.005,
         maskRadius: currentRadius,
         maskFeather: starkConfig.engine.maskFeather,
         scrollProgress: currentScroll,
@@ -82,77 +96,110 @@ export const BinaryMaskRenderer: React.FC<BinaryMaskRendererProps> = ({
         particleSize: starkConfig.engine.particleFontSize,
         accentGold: starkConfig.engine.accentGold,
         tempCanvas: offscreenCanvasRef.current,
+        tempCanvas2: offscreenCanvasRef2.current,
       },
       starkConfig.engine.defaultWidth,
       starkConfig.engine.defaultHeight
     );
 
-    // Continue loop if active, transforming via scroll, or fading out
+    // Continue loop only when actively interacting, transforming, or reconstructing
     const needsContinuousLoop =
       isPointerActive.current ||
-      activeIntensity.current > 0.01 ||
+      activeIntensity.current > 0.005 ||
       (currentScroll > 0.005 && currentScroll < 0.995);
 
-    if (needsContinuousLoop) {
+    if (needsContinuousLoop && isVisibleRef.current) {
       animationFrameId.current = requestAnimationFrame(renderFrame);
     } else {
       animationFrameId.current = null;
     }
   }, []);
 
+  const triggerRender = useCallback(() => {
+    if (isVisibleRef.current && !animationFrameId.current) {
+      animationFrameId.current = requestAnimationFrame(renderFrame);
+    }
+  }, [renderFrame]);
+
   // Keep scrollProgressRef in sync and request frame when progress changes
   useEffect(() => {
     scrollProgressRef.current = scrollProgress;
-    if (isReady && !animationFrameId.current) {
-      animationFrameId.current = requestAnimationFrame(renderFrame);
-    }
-  }, [scrollProgress, isReady, renderFrame]);
+    triggerRender();
+  }, [scrollProgress, triggerRender]);
 
-  // 2. Preload and Sample Images immediately on mount
+  // 2. IntersectionObserver for On-Demand Asset Loading & Loop Pausing
   useEffect(() => {
-    let isMounted = true;
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const startLoadingAssets = () => {
-      Promise.all([
-        loadImage(starkConfig.images.tonyStark.src).catch(() =>
-          loadImage(starkConfig.images.tonyStark.fallback)
-        ),
-        loadImage(starkConfig.images.satyajeet.src).catch(() =>
-          loadImage(starkConfig.images.satyajeet.fallback)
-        ),
-      ])
-        .then(([topImg, bottomImg]) => {
-          if (!isMounted) return;
-          topImgRef.current = topImg;
-          bottomImgRef.current = bottomImg;
+    let isMounted = true;
+    let hasLoaded = false;
 
-          // Precompute grid sampling once at target resolution
-          const width = starkConfig.engine.defaultWidth;
-          const height = starkConfig.engine.defaultHeight;
-          sampledGridRef.current = sampleImageToGrid(
-            topImg,
-            width,
-            height,
-            starkConfig.engine.particleStepSize
-          );
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        const isIntersecting = entry ? entry.isIntersecting : false;
+        isVisibleRef.current = isIntersecting;
 
-          setIsReady(true);
-          if (onLoaded) onLoaded();
-          requestAnimationFrame(renderFrame);
-        })
-        .catch((err) => {
-          console.error('Failed to load transformation assets:', err);
-        });
-    };
+        if (isIntersecting) {
+          // Preload and sample assets only when user approaches the section
+          if (!hasLoaded) {
+            hasLoaded = true;
+            Promise.all([
+              loadImage(starkConfig.images.tonyStark.src).catch(() =>
+                loadImage(starkConfig.images.tonyStark.fallback)
+              ),
+              loadImage(starkConfig.images.satyajeet.src).catch(() =>
+                loadImage(starkConfig.images.satyajeet.fallback)
+              ),
+            ])
+              .then(([topImg, bottomImg]) => {
+                if (!isMounted) return;
+                topImgRef.current = topImg;
+                bottomImgRef.current = bottomImg;
 
-    startLoadingAssets();
+                // Precompute grid sampling once at target resolution
+                const width = starkConfig.engine.defaultWidth;
+                const height = starkConfig.engine.defaultHeight;
+                sampledGridRef.current = sampleImageToGrid(
+                  topImg,
+                  width,
+                  height,
+                  starkConfig.engine.particleStepSize
+                );
+
+                setIsReady(true);
+                if (onLoaded) onLoaded();
+                triggerRender();
+              })
+              .catch((err) => {
+                console.error('Failed to load transformation assets:', err);
+              });
+          } else {
+            // Wake render loop if already loaded
+            triggerRender();
+          }
+        } else {
+          // Scrolled away: pause animation loop immediately to save CPU/battery
+          if (animationFrameId.current) {
+            cancelAnimationFrame(animationFrameId.current);
+            animationFrameId.current = null;
+          }
+        }
+      },
+      { rootMargin: '400px 0px 400px 0px' }
+    );
+
+    observer.observe(canvas);
 
     return () => {
       isMounted = false;
+      observer.disconnect();
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current);
+      }
     };
-  }, [onLoaded, renderFrame]);
+  }, [onLoaded, triggerRender]);
 
   // Setup Canvas Dimensions with HiDPI support
   useEffect(() => {
@@ -171,16 +218,8 @@ export const BinaryMaskRenderer: React.FC<BinaryMaskRendererProps> = ({
       ctx.scale(dpr, dpr);
     }
 
-    if (isReady && !animationFrameId.current) {
-      animationFrameId.current = requestAnimationFrame(renderFrame);
-    }
-
-    return () => {
-      if (animationFrameId.current) {
-        cancelAnimationFrame(animationFrameId.current);
-      }
-    };
-  }, [isReady, renderFrame]);
+    triggerRender();
+  }, [isReady, triggerRender]);
 
   // Pointer & Touch Handlers
   const handlePointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
@@ -195,9 +234,7 @@ export const BinaryMaskRenderer: React.FC<BinaryMaskRendererProps> = ({
     targetPointerPos.current.y = (e.clientY - rect.top) * scaleY;
     isPointerActive.current = true;
 
-    if (!animationFrameId.current) {
-      animationFrameId.current = requestAnimationFrame(renderFrame);
-    }
+    triggerRender();
   };
 
   const handlePointerEnter = (e: React.PointerEvent<HTMLCanvasElement>) => {
@@ -206,9 +243,7 @@ export const BinaryMaskRenderer: React.FC<BinaryMaskRendererProps> = ({
 
   const handlePointerLeave = () => {
     isPointerActive.current = false;
-    if (!animationFrameId.current) {
-      animationFrameId.current = requestAnimationFrame(renderFrame);
-    }
+    triggerRender();
   };
 
   return (

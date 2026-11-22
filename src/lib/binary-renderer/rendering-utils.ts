@@ -7,6 +7,13 @@ export interface Point {
   y: number;
 }
 
+export interface CropRect {
+  sx: number;
+  sy: number;
+  sWidth: number;
+  sHeight: number;
+}
+
 export function smoothstep(min: number, max: number, value: number): number {
   const x = Math.max(0, Math.min(1, (value - min) / (max - min)));
   return x * x * (3 - 2 * x);
@@ -14,6 +21,36 @@ export function smoothstep(min: number, max: number, value: number): number {
 
 export function lerp(start: number, end: number, t: number): number {
   return start * (1 - t) + end * t;
+}
+
+/**
+ * Computes exact focal-aware cover crop coordinates ensuring images with
+ * different source aspect ratios align with identical composition and zero distortion.
+ */
+export function computeCoverCrop(
+  imgWidth: number,
+  imgHeight: number,
+  targetWidth: number,
+  targetHeight: number,
+  focalY: number = 0.25 // Default upper-third focal point for portraits
+): CropRect {
+  const targetAspect = targetWidth / targetHeight;
+  const imgAspect = imgWidth / imgHeight;
+
+  if (imgAspect > targetAspect) {
+    // Source is wider than target frame: crop horizontal edges symmetrically
+    const sHeight = imgHeight;
+    const sWidth = Math.round(imgHeight * targetAspect);
+    const sx = Math.round((imgWidth - sWidth) / 2);
+    return { sx, sy: 0, sWidth, sHeight };
+  } else {
+    // Source is taller than target frame: crop vertical edges aligned with focal point
+    const sWidth = imgWidth;
+    const sHeight = Math.round(imgWidth / targetAspect);
+    const maxSy = imgHeight - sHeight;
+    const sy = Math.max(0, Math.min(maxSy, Math.round(maxSy * focalY)));
+    return { sx: 0, sy, sWidth, sHeight };
+  }
 }
 
 export function loadImage(src: string): Promise<HTMLImageElement> {

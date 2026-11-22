@@ -179,8 +179,8 @@
     0 4px 18px rgba(0, 0, 0, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.22),
     inset 0 0 24px rgba(255, 255, 255, 0.02);
-  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
-              border-color 0.35s ease,
+  transform-origin: center center;
+  transition: border-color 0.35s ease,
               box-shadow 0.35s ease;
 
   &:hover {
@@ -190,7 +190,6 @@
       0 32px 80px -12px rgba(0, 0, 0, 0.75),
       0 0 40px rgba(245, 158, 11, 0.15),
       inset 0 1px 0 rgba(255, 255, 255, 0.35);
-    transform: translateY(-3px);
   }
 
   @include screen-below($bp-laptop) {

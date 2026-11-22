@@ -2,10 +2,10 @@
 
 export const siteConfig = {
   name: 'Satyajeet Behera',
-  title: 'Satyajeet Behera | Personal Portfolio',
+  title: 'Satyajeet Behera | AI Enthusiast & Developer',
   logo: '/images/logo.webp',
   description:
-    'Explore the work, projects and experiments of Satyajeet Behera — building intelligent tools, autonomous agents and high-performance digital experiences.',
+    'Explore the work, projects and experiments of Satyajeet Behera — AI enthusiast, developer and builder creating intelligent tools, autonomous agents and high-performance digital experiences.',
   eyebrow: '',
   mainHeading: "Hi, I'm Satyajeet Behera.",
   supportingDescription:

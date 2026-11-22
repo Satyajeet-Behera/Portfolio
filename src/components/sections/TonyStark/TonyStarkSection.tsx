@@ -29,26 +29,23 @@ export const TonyStarkSection: React.FC = () => {
     }
 
     const ctx = gsap.context(() => {
+      const isMobile = window.innerWidth <= 768;
       ScrollTrigger.create({
         trigger: sectionRef.current,
         start: 'top top',
-        end: starkConfig.scroll.pinDistance,
+        end: isMobile ? '+=900' : starkConfig.scroll.pinDistance,
         pin: pinTargetRef.current,
         pinSpacing: true,
         scrub: 0.5,
         anticipatePin: 1,
+        invalidateOnRefresh: true,
         onUpdate: (self) => {
           setScrollProgress(self.progress);
         },
       });
     }, sectionRef);
 
-    // Ensure ScrollTrigger accurately calculates start offset after DOM stabilizes
-    ScrollTrigger.refresh();
-    const timer = setTimeout(() => ScrollTrigger.refresh(), 300);
-
     return () => {
-      clearTimeout(timer);
       ctx.revert();
     };
   }, []);
@@ -112,7 +109,11 @@ export const TonyStarkSection: React.FC = () => {
             <div className={styles.stageCol}>
               <StarkImageStage
                 scrollProgress={scrollProgress}
-                onLoaded={() => ScrollTrigger.refresh()}
+                onLoaded={() => {
+                  requestAnimationFrame(() => {
+                    ScrollTrigger.refresh();
+                  });
+                }}
               />
             </div>
           </div>

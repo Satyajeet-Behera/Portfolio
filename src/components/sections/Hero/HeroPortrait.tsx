@@ -28,8 +28,8 @@ export const HeroPortrait: React.FC<HeroPortraitProps> = ({
             height={1536}
             priority={priority}
             fetchPriority="high"
-            quality={95}
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 60vw, 800px"
+            quality={85}
+            sizes="(max-width: 640px) 92vw, (max-width: 1024px) 50vw, 680px"
             className={styles.image}
           />
           {/* Subtle vignette layer blending photograph's deep black background with site canvas */}

@@ -46,6 +46,7 @@ export const StarkImageStage: React.FC<StarkImageStageProps> = ({
               alt={starkConfig.images.tonyStark.alt}
               width={starkConfig.images.tonyStark.width}
               height={starkConfig.images.tonyStark.height}
+              sizes="(max-width: 640px) 340px, (max-width: 1024px) 440px, 480px"
               loading="lazy"
               className={styles.preloaderImage}
             />
