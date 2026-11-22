@@ -26,7 +26,7 @@ export const FinalContact: React.FC = () => {
       <Container className={styles.container}>
         <div className={styles.header}>
           <div className={styles.eyebrowWrapper}>
-            <SectionLabel text="CHANNELS // DIRECT NETWORK" />
+            <SectionLabel text="CHANNELS // DIRECT NETWORK" className={styles.sectionLabelCustom} />
           </div>
 
           <h2 id="final-contact-heading" className={styles.heading}>
@@ -39,8 +39,8 @@ export const FinalContact: React.FC = () => {
         </div>
 
         <div className={styles.grid}>
-          {/* GitHub Card */}
-          <div className={styles.card}>
+          {/* GitHub Card: Black and White */}
+          <div className={`${styles.card} ${styles.cardGithub}`}>
             <div className={styles.cardHeader}>
               <div className={styles.iconCircle} aria-hidden="true">
                 <svg
@@ -92,8 +92,8 @@ export const FinalContact: React.FC = () => {
             <div className={`${styles.corner} ${styles.cornerBR}`} aria-hidden="true" />
           </div>
 
-          {/* Instagram Card */}
-          <div className={styles.card}>
+          {/* Instagram Card: Purple and Blue */}
+          <div className={`${styles.card} ${styles.cardInstagram}`}>
             <div className={styles.cardHeader}>
               <div className={styles.iconCircle} aria-hidden="true">
                 <svg
@@ -147,8 +147,8 @@ export const FinalContact: React.FC = () => {
             <div className={`${styles.corner} ${styles.cornerBR}`} aria-hidden="true" />
           </div>
 
-          {/* WhatsApp Card */}
-          <div className={styles.card}>
+          {/* WhatsApp Card: Green and White */}
+          <div className={`${styles.card} ${styles.cardWhatsapp}`}>
             <div className={styles.cardHeader}>
               <div className={styles.iconCircle} aria-hidden="true">
                 <svg
@@ -200,8 +200,8 @@ export const FinalContact: React.FC = () => {
             <div className={`${styles.corner} ${styles.cornerBR}`} aria-hidden="true" />
           </div>
 
-          {/* Email Card */}
-          <div className={styles.card}>
+          {/* Email Card: Red and White */}
+          <div className={`${styles.card} ${styles.cardEmail}`}>
             <div className={styles.cardHeader}>
               <div className={styles.iconCircle} aria-hidden="true">
                 <svg

@@ -44,7 +44,7 @@ export const Footer: React.FC = () => {
                 <Link href="/" className={styles.footerLink}>Home</Link>
               </li>
               <li>
-                <Link href="/#stark" className={styles.footerLink}>Intelligence</Link>
+                <Link href="/#intelligence" className={styles.footerLink}>Intelligence</Link>
               </li>
               <li>
                 <Link href="/#magix" className={styles.footerLink}>Magix AI</Link>
@@ -116,38 +116,39 @@ export const Footer: React.FC = () => {
                   className={styles.footerLink}
                   aria-label={socialLinks.email.ariaLabel}
                 >
-                  Email
+                  Direct Email
                   <span className={styles.externalArrow} aria-hidden="true">↗</span>
                 </a>
               </li>
             </ul>
           </div>
 
-          {/* Quick Action / Back to Top */}
+          {/* Quick Action: Back to top + Availability */}
           <div className={styles.actionCol}>
             <button
               type="button"
               onClick={scrollToTop}
               className={styles.backToTopButton}
-              aria-label="Back to top of page"
+              aria-label="Scroll back to top of the page"
             >
-              <span className={styles.topArrow} aria-hidden="true">↑</span>
               <span>Back to Top</span>
+              <span className={styles.topArrow} aria-hidden="true">↑</span>
             </button>
-            <div className={styles.statusIndicator} aria-hidden="true">
-              <span className={styles.statusDot} />
-              <span className={styles.statusText}>Systems Operational</span>
+
+            <div className={styles.statusIndicator} role="status">
+              <span className={styles.statusDot} aria-hidden="true" />
+              <span className={styles.statusText}>Open to Collabs & Engineering</span>
             </div>
           </div>
         </div>
 
-        {/* Bottom Bar */}
+        {/* Bottom Bar: Copyright & Attribution */}
         <div className={styles.bottomBar}>
           <p className={styles.copyright}>
             &copy; {currentYear} Satyajeet Behera. All rights reserved.
           </p>
           <p className={styles.techCredit}>
-            Engineered with Next.js App Router, TypeScript & SCSS Modules.
+            Designed & Engineered with Next.js & TypeScript
           </p>
         </div>
       </Container>
